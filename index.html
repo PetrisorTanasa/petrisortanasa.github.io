@@ -25,8 +25,25 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  overflow-y: hidden;
 }
+
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
 
 table {
     border-collapse: collapse;
@@ -61,7 +78,6 @@ input[type="submit"] {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Hover effect */
 input[type="submit"]:hover {
   background-color: rgb(194, 178, 128);
   color: rgb(0, 0, 0); 
@@ -83,6 +99,23 @@ input[type="checkbox"] {
   display: grid;
   place-content: center;
 }
+
+select {
+    font-family: Arial, sans-serif;
+    width: 200px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    color: #333;
+    border: 1px solid #ccc;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  
+  select:hover {
+    border-color: #666;
+  }
+  
 
 input[type="checkbox"]::before {
   content: "";
