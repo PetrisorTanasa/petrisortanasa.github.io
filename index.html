@@ -180,6 +180,7 @@ input[type="checkbox"]:disabled {
         </table>
 
         <input type="submit" value="Calculate">
+        <input type="submit" id="deselectButton" value="Deselect all" style="float:right">
     </form>
     <table id="itemTaxAndNet">
     </table>
@@ -430,6 +431,22 @@ input[type="checkbox"]:disabled {
         }
 
         populateItemList();
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get references to the button and checkboxes
+            const deselectButton = document.getElementById("deselectButton");
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        
+            // Add a click event listener to the button
+            deselectButton.addEventListener("click", function() {
+                // Loop through each checkbox
+                checkboxes.forEach(function(checkbox) {
+                    // Deselect (uncheck) the checkbox
+                    checkbox.checked = false;
+                });
+            });
+        });
+        
     </script>
 </body>
 </html>
