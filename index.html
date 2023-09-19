@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator barem arbitrii</title>
+
+    <style>
+        #itemList {
+            width: 100%
+        }
+
+        #itemTaxAndNet {
+            width: 100%
+        }
+
+body {
+    height: 100vh;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+  margin:auto;
+  background: url("http://svgur.com/i/5Y.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  overflow-y: hidden;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  tr:nth-child(even) {
+    background-color: rgb(225, 193, 110);
+  }
+
+  tr:nth-child(odd) {
+    background-color: rgb(224, 186, 88);
+  }
+
+input[type="submit"] {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  background-color: rgb(193, 154, 107);
+  color: rgb(0, 0, 0);
+  border: 2px solid rgb(193, 154, 107);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect */
+input[type="submit"]:hover {
+  background-color: rgb(194, 178, 128);
+  color: rgb(0, 0, 0); 
+}
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--form-background);
+  margin: 0;
+
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid currentColor;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transform-origin: bottom left;
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--form-control-color);
+  background-color: CanvasText;
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="checkbox"]:focus {
+  outline: max(2px, 0.15em) solid currentColor;
+  outline-offset: max(2px, 0.15em);
+}
+
+input[type="checkbox"]:disabled {
+  --form-control-color: var(--form-control-disabled);
+
+  color: var(--form-control-disabled);
+  cursor: not-allowed;
+}
+
+    </style>
+</head>
+<body style="background-color: rgb(0, 140, 255);">
+    <div style="background-color:rgb(225, 193, 110); margin:auto; max-width:600px; min-width: 300px;">
+    <h1>Calculator barem</h1>
+    
+    <form id="calculationForm">
+        <label for="selectOption">Categoria:</label>
+        <select id="selectOption">
+            <option value="LNBM">LNBM</option>
+            <option value="LNBF">LNBF</option>
+            <option value="L1M">L1M</option>
+            <option value="L1F">L1F</option>
+            <option value="U16, U17, U18, U19">U16, U17, U18, U19</option>
+            <option value="U12, U13, U14, U15">U12, U13, U14, U15</option>
+        </select>
+
+        <table id="itemList">
+        </table>
+
+        <table>
+            <tr><td>Total</td><td id="total">0</td></tr>
+            <tr><td>Impozit</td><td id="impozit">0</td></tr>
+            <tr><td>Net</td><td id="net">0</td></tr>
+        </table>
+        <table><tr><td>Selecteaza impozitul:</td><td>
+        <select id="taxRate">
+            <option value="5">5%</option>
+            <option value="10">10%</option>
+            <option value="15">15%</option>
+            <option value="20">20%</option>
+        </select></td></tr>
+        </table>
+
+        <input type="submit" value="Calculate">
+    </form>
+    <table id="itemTaxAndNet">
+    </table>
+</div>
+
+<div id="allWrapper">
+    
+</div>
+    <script>
+        const items = [
+            { 
+                name: "LNBM", 
+                options: [
+                    { name: "Delegat tehnic", value: 600 },
+                    { name: "Scorer", value: 140 },
+                    { name: "Ajutor scorer", value: 140 },
+                    { name: "Operator 24", value: 140 },
+                    { name: "Cronometror", value: 140 },
+                    { name: "Statistician 1", value: 140 },
+                    { name: "Statistician 2", value: 140 },
+                    { name: "Video observator", value: 300 },
+                    { name: "Single-judge", value: 100 },
+                    { name: "Instructor national", value: 200 },
+                ]
+            },
+            { 
+                name: "LNBF", 
+                options: [
+                    { name: "Comisar", value: 280 },
+                    { name: "Scorer", value: 140 },
+                    { name: "Ajutor scorer", value: 140 },
+                    { name: "Operator 24", value: 140 },
+                    { name: "Cronometror", value: 140 },
+                    { name: "Statistician 1", value: 140 },
+                    { name: "Statistician 2", value: 140 },
+                    { name: "Video observator", value: 200 }
+                ]
+            },
+            { 
+                name: "L1M", 
+                options: [
+                    { name: "Arbitru 1", value: 210 },
+                    { name: "Arbitru 2", value: 210 },
+                    { name: "Arbitru 3", value: 210 },
+                    { name: "Comisar", value: 157 },
+                    { name: "Scorer", value: 140 },
+                    { name: "Ajutor scorer", value: 105 },
+                    { name: "Operator 24", value: 105 },
+                    { name: "Cronometror", value: 105 },
+                    { name: "Statistician 1", value: 105 },
+                    { name: "Statistician 2", value: 105 },
+                ]
+            },
+            { 
+                name: "L1F", 
+                options: [
+                    { name: "Arbitru 1", value: 90 },
+                    { name: "Arbitru 2", value: 90 },
+                    { name: "Arbitru 3", value: 90 },
+                    { name: "Comisar", value: 60 },
+                    { name: "Scorer", value: 45 },
+                    { name: "Ajutor scorer", value: 45 },
+                    { name: "Operator 24", value: 45 },
+                    { name: "Cronometror", value: 45 },
+                    { name: "Statistician 1", value: 45 },
+                    { name: "Statistician 2", value: 45 },
+                ]
+            },
+            {
+                name: "U16, U17, U18, U19",
+                options: [
+                    { name: "Arbitru 1", value: 90 },
+                    { name: "Arbitru 2", value: 90 },
+                    { name: "Arbitru 3", value: 90 },
+                    { name: "Comisar", value: 60 },
+                    { name: "Scorer", value: 45 },
+                    { name: "Ajutor scorer", value: 45 },
+                    { name: "Operator 24", value: 45 },
+                    { name: "Cronometror", value: 45 },
+                    { name: "Statistician 1", value: 45 },
+                    { name: "Statistician 2", value: 45 },
+                ]
+            },
+            {
+                name: "U12, U13, U14, U15",
+                options: [
+                    { name: "Arbitru 1", value: 71 },
+                    { name: "Arbitru 2", value: 71 },
+                    { name: "Arbitru 3", value: 71 },
+                    { name: "Comisar", value: 54 },
+                    { name: "Scorer", value: 40 },
+                    { name: "Ajutor scorer", value: 40 },
+                    { name: "Operator 24", value: 40 },
+                    { name: "Cronometror", value: 40 },
+                    { name: "Statistician 1", value: 40 },
+                    { name: "Statistician 2", value: 40 },
+                ]
+            }
+        ];
+
+        const selectOption = document.getElementById("selectOption");
+        const itemList = document.getElementById("itemList");
+        const totalElement = document.getElementById("total");
+        const form = document.getElementById("calculationForm");
+        const taxRateSelect = document.getElementById("taxRate");
+        const impozitElement = document.getElementById("impozit");
+        const netElement = document.getElementById("net");
+        const itemTaxAndNetList = document.getElementById("itemTaxAndNet");
+
+        selectOption.addEventListener("change", populateItemList);
+        form.addEventListener("submit", calculateTotal);
+        taxRateSelect.addEventListener("change", calculateTaxAndNetAndItemTaxNet);
+
+        function populateItemList() {
+            const selectedOption = selectOption.value;
+            const selectedItem = items.find(item => item.name === selectedOption);
+            itemList.innerHTML = "";
+
+            if (selectedItem && selectedItem.options) {
+                selectedItem.options.forEach(option => {
+                    const tableRow = document.createElement("tr");
+                    
+                    const itemNameCell = document.createElement("td");
+                    itemNameCell.textContent = option.name;
+                    
+                    const itemPriceCell = document.createElement("td");
+                    itemPriceCell.textContent = `${option.value} lei`;
+                    
+                    const itemCheckboxCell = document.createElement("td");
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.value = option.name + ' - ' + option.value;
+                    itemCheckboxCell.appendChild(checkbox);
+                    
+                    tableRow.appendChild(itemNameCell);
+                    tableRow.appendChild(itemPriceCell);
+                    tableRow.appendChild(itemCheckboxCell);
+                    
+                    itemList.appendChild(tableRow);
+                });
+            }
+
+            calculateTaxAndNetAndItemTaxNet();
+        }
+
+        function calculateTotal(event) {
+            event.preventDefault();
+
+            const checkboxes = document.querySelectorAll("#itemList input[type='checkbox']");
+            let total = 0;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    total += parseFloat(checkbox.value.split(' - ')[1]);
+                }
+            });
+
+            totalElement.textContent = total.toFixed(2);
+            calculateTaxAndNetAndItemTaxNet();
+        }
+
+        function calculateTaxAndNet() {
+            const total = parseFloat(totalElement.textContent);
+            const taxRate = parseFloat(taxRateSelect.value) / 100;
+
+            const impozit = total * taxRate;
+            const net = total - impozit;
+
+            impozitElement.textContent = impozit.toFixed(2);
+            netElement.textContent = net.toFixed(2);
+        }
+
+        function calculateItemTaxAndNet() {
+            itemTaxAndNetList.innerHTML = "";
+
+            const checkboxes = document.querySelectorAll("#itemList input[type='checkbox']");
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const itemValue = parseFloat(checkbox.value.split(' - ')[1]);
+                    const taxRate = parseFloat(taxRateSelect.value) / 100;
+
+                    const itemImpozit = itemValue * taxRate;
+                    const itemNet = itemValue - itemImpozit;
+
+                    const itemName = checkbox.value.split(' - ')[0];
+
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${itemName}: Net - ${itemNet.toFixed(2)} lei`;
+                    itemTaxAndNetList.appendChild(listItem);
+                }
+            });
+        }
+
+        function calculateItemTaxAndNet() {
+
+    itemTaxAndNetList.innerHTML = "";
+
+    const checkboxes = document.querySelectorAll("#itemList input[type='checkbox']");
+    let hasRecords = false;
+
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            const itemValue = parseFloat(checkbox.value.split(' - ')[1]);
+            const taxRate = parseFloat(taxRateSelect.value) / 100;
+
+            const itemImpozit = itemValue * taxRate;
+            const itemNet = itemValue - itemImpozit;
+
+            const itemName = checkbox.parentElement.parentElement.cells[0].textContent;
+
+            const tableRow = document.createElement("tr");
+            
+            const itemNameCell = document.createElement("td");
+            itemNameCell.textContent = itemName;
+            
+            const itemNetCell = document.createElement("td");
+            itemNetCell.textContent = `${itemNet.toFixed(2)} lei`;
+            
+            tableRow.appendChild(itemNameCell);
+            tableRow.appendChild(itemNetCell);
+            
+            itemTaxAndNetList.appendChild(tableRow);
+            
+            hasRecords = true;
+        }
+    });
+    if(hasRecords){
+        const headerRow = document.createElement("tr");
+    
+    const nothingHeaderCell = document.createElement("th");
+    nothingHeaderCell.textContent = "";
+    
+    const netHeaderCell = document.createElement("th");
+    netHeaderCell.textContent = "NET";
+    
+    headerRow.appendChild(nothingHeaderCell);
+    headerRow.appendChild(netHeaderCell);
+    
+    itemTaxAndNetList.insertBefore(headerRow, itemTaxAndNetList.firstChild);
+    }
+}
+
+
+        function calculateTaxAndNetAndItemTaxNet() {
+            calculateTaxAndNet();
+            calculateItemTaxAndNet();
+        }
+
+        populateItemList();
+    </script>
+</body>
+</html>
