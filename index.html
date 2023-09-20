@@ -64,7 +64,7 @@ table {
     background-color: rgb(224, 186, 88);
   }
 
-input[type="submit"] {
+input[type="submit"] , #deselectButton {
   padding: 10px 20px;
   font-size: 16px;
   font-weight: bold;
@@ -78,7 +78,7 @@ input[type="submit"] {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-input[type="submit"]:hover {
+input[type="submit"]:hover , #deselectButton:hover{
   background-color: rgb(194, 178, 128);
   color: rgb(0, 0, 0); 
 }
@@ -149,10 +149,15 @@ input[type="checkbox"]:disabled {
 </head>
 <body style="background-color: rgb(0, 140, 255);">
     <div style="background-color:rgb(225, 193, 110); margin:auto; max-width:600px; min-width: 300px;">
-    <h1>Calculator barem</h1>
+    <h1 style="text-align: center;">Calculator barem</h1>
     
     <form id="calculationForm">
+        <table>
+            <tr>
+                <td>
         <label for="selectOption">Categoria:</label>
+        </td>
+        <td>
         <select id="selectOption">
             <option value="LNBM">LNBM</option>
             <option value="LNBF">LNBF</option>
@@ -161,7 +166,14 @@ input[type="checkbox"]:disabled {
             <option value="U16, U17, U18, U19">U16, U17, U18, U19</option>
             <option value="U12, U13, U14, U15">U12, U13, U14, U15</option>
         </select>
-
+        </td>
+    </tr>
+    <tr>
+        <td>Amical?</td>
+        <td>
+        <input type="checkbox" id="friendlyMatch"/> 
+            </td>
+    </tr>
         <table id="itemList">
         </table>
 
@@ -180,7 +192,7 @@ input[type="checkbox"]:disabled {
         </table>
 
         <input type="submit" value="Calculate">
-        <input type="submit" id="deselectButton" value="Deselect all" style="float:right">
+        <div id="deselectButton" style="float:right">Deselect all</div>  
     </form>
     <table id="itemTaxAndNet">
     </table>
@@ -289,10 +301,32 @@ input[type="checkbox"]:disabled {
         const impozitElement = document.getElementById("impozit");
         const netElement = document.getElementById("net");
         const itemTaxAndNetList = document.getElementById("itemTaxAndNet");
+        const friendlyMatch = document.getElementById("friendlyMatch");
+        const deselectButton = document.getElementById("deselectButton");
 
+        friendlyMatch.addEventListener("change", populateItemList);
         selectOption.addEventListener("change", populateItemList);
         form.addEventListener("submit", calculateTotal);
         taxRateSelect.addEventListener("change", calculateTaxAndNetAndItemTaxNet);
+
+        friendlyMatch.addEventListener("change", function() {
+            let total = document.getElementById("total")
+            let impozit = document.getElementById("impozit")
+            let net = document.getElementById("net")
+
+            total.textContent = "0.00";
+            impozit.textContent = "0.00";
+            net.textContent = "0.00";
+        });
+
+        deselectButton.addEventListener("click", function() {
+            let status = friendlyMatch.checked;
+            let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = false;
+            });
+            friendlyMatch.checked = status
+        });
 
         function populateItemList() {
             const selectedOption = selectOption.value;
@@ -307,12 +341,20 @@ input[type="checkbox"]:disabled {
                     itemNameCell.textContent = option.name;
                     
                     const itemPriceCell = document.createElement("td");
-                    itemPriceCell.textContent = `${option.value} lei`;
                     
                     const itemCheckboxCell = document.createElement("td");
                     const checkbox = document.createElement("input");
                     checkbox.type = "checkbox";
+
+                    if(friendlyMatch.checked){
+                    checkbox.value = option.name + ' - ' + option.value/2;
+                    itemPriceCell.textContent = `${option.value/2} lei`;
+
+                    }else{
                     checkbox.value = option.name + ' - ' + option.value;
+                    itemPriceCell.textContent = `${option.value} lei`;
+
+                    }
                     itemCheckboxCell.appendChild(checkbox);
                     
                     tableRow.appendChild(itemNameCell);
@@ -431,22 +473,6 @@ input[type="checkbox"]:disabled {
         }
 
         populateItemList();
-
-        document.addEventListener("DOMContentLoaded", function() {
-            // Get references to the button and checkboxes
-            const deselectButton = document.getElementById("deselectButton");
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        
-            // Add a click event listener to the button
-            deselectButton.addEventListener("click", function() {
-                // Loop through each checkbox
-                checkboxes.forEach(function(checkbox) {
-                    // Deselect (uncheck) the checkbox
-                    checkbox.checked = false;
-                });
-            });
-        });
-        
     </script>
 </body>
 </html>
