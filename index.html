@@ -396,29 +396,8 @@ input[type="checkbox"]:disabled {
         }
 
         function calculateItemTaxAndNet() {
-            itemTaxAndNetList.innerHTML = "";
-
-            const checkboxes = document.querySelectorAll("#itemList input[type='checkbox']");
-
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    const itemValue = parseFloat(checkbox.value.split(' - ')[1]);
-                    const taxRate = parseFloat(taxRateSelect.value) / 100;
-
-                    const itemImpozit = itemValue * taxRate;
-                    const itemNet = itemValue - itemImpozit;
-
-                    const itemName = checkbox.value.split(' - ')[0];
-
-                    const listItem = document.createElement("li");
-                    listItem.textContent = `${itemName}: Net - ${itemNet.toFixed(2)} lei`;
-                    itemTaxAndNetList.appendChild(listItem);
-                }
-            });
-        }
-
-        function calculateItemTaxAndNet() {
-
+            let total = document.getElementById("total")
+            if(total.innerHTML > 1){
     itemTaxAndNetList.innerHTML = "";
 
     const checkboxes = document.querySelectorAll("#itemList input[type='checkbox']");
@@ -464,6 +443,7 @@ input[type="checkbox"]:disabled {
     
     itemTaxAndNetList.insertBefore(headerRow, itemTaxAndNetList.firstChild);
     }
+}
 }
 
 
