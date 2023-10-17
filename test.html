@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>USB Drive File Reader</title>
+</head>
+<body>
+    <h1>USB Drive File Reader</h1>
+    <button id="connectButton">Connect to USB Drive</button>
+    <button id="readFilesButton" style="display: none">Read Files</button>
+    <ul id="fileList"></ul>
+    <script>
+        let usbDevice;
+        let fileSystemHandle;
+        const connectButton = document.getElementById("connectButton");
+        const readFilesButton = document.getElementById("readFilesButton");
+        const fileList = document.getElementById("fileList");
+
+        async function connectToUSBDrive() {
+            try {
+                usbDevice = await navigator.usb.requestDevice({ filters: [] });
+                await usbDevice.open();
+                await usbDevice.selectConfiguration(1);
+                await usbDevice.claimInterface(0);
+                await usbDevice.selectAlternateInterface(0, 0);
+                const transferIn = await usbDevice.controlTransferIn({
+                    requestType: 'class',
+                    recipient: 'interface',
+                    request: 0x22,
+                    value: 0x01,
+                    index: 0x00,
+                }, 64);
+
+                fileSystemHandle = await navigator.storage.getDirectory();
+                readFilesButton.style.display = "inline";
+                connectButton.style.display = "none";
+            } catch (error) {
+                console.error(`Error: ${error}`);
+            }
+        }
+
+        async function readFilesFromUSBDrive() {
+            try {
+                const entries = await fileSystemHandle.getEntries();
+                fileList.innerHTML = '';
+
+                for await (const entry of entries) {
+                    if (entry.isFile) {
+                        const file = await entry.getFile();
+                        const fileContents = await file.text();
+                        const listItem = document.createElement("li");
+                        listItem.textContent = `File: ${entry.name}, Content: ${fileContents}`;
+                        fileList.appendChild(listItem);
+                    }
+                }
+            } catch (error) {
+                console.error(`Error: ${error}`);
+            }
+        }
+
+        connectButton.addEventListener("click", connectToUSBDrive);
+        readFilesButton.addEventListener("click", readFilesFromUSBDrive);
+    </script>
+</body>
+</html>
