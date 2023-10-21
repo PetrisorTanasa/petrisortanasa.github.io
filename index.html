@@ -327,6 +327,11 @@ input[type="checkbox"]:disabled {
 
         friendlyMatch.addEventListener("change", populateItemList);
         selectOption.addEventListener("change", populateItemList);
+        selectOption.addEventListener("change", function (){
+            totalElement.textContent = "0.00";
+            impozitElement.textContent = "0.00";
+            netElement.textContent = "0.00";
+        });
         form.addEventListener("submit", calculateTotal);
         taxRateSelect.addEventListener("change", calculateTaxAndNetAndItemTaxNet);
 
