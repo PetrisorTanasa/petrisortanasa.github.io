@@ -203,6 +203,10 @@ input[type="checkbox"]:disabled {
     
 </div>
     <script>
+        const juniori = [
+            "U16, U17, U18, U19",
+            "U12, U13, U14, U15"
+            ];
         const items = [
             { 
                 name: "LNBM", 
@@ -398,6 +402,10 @@ input[type="checkbox"]:disabled {
             });
 
             totalElement.textContent = total.toFixed(2);
+
+            if(juniori.includes(selectOption.value)){
+                totalElement.textContent = totalElement.textContent + "(per echipa " + total.toFixed(2)/2 +")";
+            }
             calculateTaxAndNetAndItemTaxNet();
         }
 
@@ -409,6 +417,7 @@ input[type="checkbox"]:disabled {
             const net = total - impozit;
 
             impozitElement.textContent = impozit.toFixed(2);
+
             netElement.textContent = net.toFixed(2);
         }
 
