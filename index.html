@@ -355,12 +355,6 @@ input[type="checkbox"]:disabled {
             itemList.innerHTML = "";
 
             if (selectedItem && selectedItem.options) {
-                if(selectedItem.options.length == 0){
-                    totalElement.textContent = "0.00";
-                    netElement.textContent = "0.00";
-                    impozitElement.textContent = "0.00";
-                }
-                
                 selectedItem.options.forEach(option => {
                     const tableRow = document.createElement("tr");
                     
