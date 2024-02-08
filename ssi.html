@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hai cu punctul la SSI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: bisque;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    #termDefinition {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1></h1>
+    <div id="termDefinition"></div>
+    <button id="showDefinition">Show Definition</button>
+    <button id="nextTerm">Next Term</button>
+  </div>
+  <script>
+      
+    const terms = {
+        'Adversar': 'O entitate (inclusiv un insider) care actioneaza rau intentionat pentru a compromite un sistem.',
+         'Securitate': 'O conditie care rezulta din stabilirea si mentinerea masurilor de protectie care permit unei organizatii/sistem sa isi indeplineasca misiunea sau functiile critice, in ciuda riscurilor reprezentate de amenintari.',
+          'Risc': 'O masura a gradului in care o entitate este amenintata de o eventuala circumstanta sau eveniment.',
+           'Vulnerabilitate': 'Slabiciune intr-un sistem informational, proceduri de securitate ale sistemului, controale interne sau implementare care ar fi putea fi exploatate sau declansate de o surss de amenintare.',
+            'Securitate Cibernetica': 'Capacitatea de a proteja / apara spatiul cibernetic de atacuri cibernetice.',
+             'malware': 'software that is specifically designed to disrupt, damage, or gain unauthorized access to a computer system',
+              'virus': 'a piece of code which is capable of copying itself and corrupts/destroys data in a system',
+               'dropper': 'a dropper is a kind of Trojan that has been designed to "install" malware (virus, backdoor, etc.) to a computer. The malware code can be contained within the dropper.',
+                'downloader': 'a downloader is a type of trojan that installs itself to the system and waits until an Internet connection becomes available to connect to a remote server or website in order to download additional programs.',
+                 'trojan': 'a type of malicious code or software that looks legitimate but can take control of your computer',
+                  'spyware': "software that enables a user to obtain covert information about another's computer activities by transmitting data secretly from their hard drive.",
+                   'riskware': 'riskware defines any legitimate programs that pose potential risks due to security vulnerability, software incompatibility, or legal violations.',
+                    'ransomware': 'a type of malicious software designed to block access to a computer system until a sum of money is paid.',
+                     'adware': 'software that automatically displays or downloads advertising material such as banners or pop-ups when a user is online.',
+                      'worm': 'a computer worm is a type of malware that spreads copies of itself from computer to computer.',
+                       'obfuscate': 'programming code is often obfuscated to protect intellectual property or trade secrets, and to prevent an attacker from reverse engineering a proprietary software program.',
+                        'Criptologie': 'Stiinta care se ocupa de criptanaliza si criptografie.', 
+                         'Criptografie': 'Disciplina care studiaza principiile, mijloacele si metodele de transformare a datelor pentru a ascunde continutul lor semantic, a preveni utilizarea lor neautorizata sau a preveni modificarea lor nedetectata.',
+                          'Criptanaliza': 'Incercarea de a infrange protectia criptografice fara o cunoastere initiala a cheii utilizate in furnizarea protectiei.',
+                           'Confidentialitate': 'Asigurarea ca informatiile nu sunt dezvaluite entitatilor neautorizate.',
+                            'Integritate': 'Protejarea impotriva modificarii sau distrugerii necorespunzatoare a informatiilor.',
+                             'Disponibilitate': 'Asigurarea accesului si utilizarii informatiilor in timp util si fiabil.',
+                              'Inginerie socialÄƒ': 'O incercare de a pacali pe cineva sa dezvaluie informatii (de exemplu, o parola) care pot fi folosite pentru a ataca sisteme sau retele.', 
+                               'Phishing': 'O tehnica pentru incercarea de a achizitiona date sensibile, cum ar fi numerele de cont bancar, printr-o solicitare frauduloasa prin e-mail sau pe un site web, in care faptuitorul se mascheaza ca o afacere legitima sau o persoana de incredere.',
+                                'Whaling': 'Un tip specific de phishing care vizeaza membrii de rang inalt ai organizatiilor.', 
+                                 'Pharming': 'Utilizarea mijloacelor tehnice pentru a redirectiona utilizatorii catre accesarea unui site Web fals, mascat drept unul legitim si divulgarea informatiilor personale.',
+                                   'Spear phishing': 'Un termen colocvial care poate fi folosit pentru a descrie orice atac de phishing foarte vizat.',
+                                    'Spoofing': 'Falsificarea adresei de trimitere a unei transmisii pentru a obtine intrarea ilegala intr-un sistem securizat.',
+                                     'DKIM' : 'DomainKeys Identified Mail – contentul mailurilor ramane trusted. SE ADAUGA O SEMNATURA DIGITALA LA HEADERUL EMAILULUI. RECEPTORII POT VERIFICA SEMNATURA FOLOSING CHEIA PUBLICA A EXPEDITORULUI, CARE E PUBLICATA IN DNS',
+                                      'DMARC' : 'Domain-based Message Authentication, Reporting and Conformance – leaga cele doua protocoale impreuna cu un set consistent de politici. Se verifica headerul mailului',
+                                       'SPF' : 'Sender Policy Framework – intareste serverul DNS si restrictioneaza adresele de la care poti primi mail. Se verifica ip, previne domain spoofing. SE VERIFICA DACA DNS UL ESTE IN LISTA AUTORIZATA A DESTINATARULUI SA TRIMITA MAILURI CATRE DESTINATAR',
+                                        'Confidentialitate' : 'păstrarea secretului informației, accesul la informația sensibilă fiind disponibilă doar persoanelor autorizat',
+                                         'Integritate (a datelor)' : 'eliminarea posibilității de modificare (schimbare, inserare, stergere)  neautorizată a informației',
+                                          'Disponibilitate' : 'permiterea entitatilor autorizate sa acceseze în timp util si fiabil informatia',
+                                           'Autentificare' : 'identifica o entitate sau atestă sursa datelor',
+                                            'Non-repudiere' : 'previne negarea unor evenimente anterioare',
+                                             
+                                };
+
+    function getRandomNumber(max) {
+        return Math.floor(Math.random() * max);
+      }
+    document.addEventListener('DOMContentLoaded', function() {
+      const termDefinition = document.getElementById('termDefinition');
+      const showDefinitionBtn = document.getElementById('showDefinition');
+      const nextTermBtn = document.getElementById('nextTerm');
+      let currentTermIndex = 0;
+      
+      // Display current term
+      function displayTerm() {
+        const term = Object.keys(terms)[currentTermIndex];
+        termDefinition.textContent = `${term}`;
+        termDefinition.style.fontSize = '24px';
+        termDefinition.style.fontWeight = 'bold';
+      }
+      
+      // Event listener for showing definition
+      showDefinitionBtn.addEventListener('click', function() {
+        const term = Object.keys(terms)[currentTermIndex];
+        const definition = terms[term];
+        termDefinition.textContent = `Definition: ${definition}`;
+      });
+      
+      // Event listener for next term
+      nextTermBtn.addEventListener('click', function() {
+        currentTermIndex = getRandomNumber(Object.keys(terms).length);
+        displayTerm();
+      });
+      
+      // Display initial term
+      displayTerm();
+    });
+  </script>
+</body>
+</html>
