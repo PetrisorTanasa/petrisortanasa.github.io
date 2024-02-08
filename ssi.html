@@ -97,7 +97,7 @@
       const termDefinition = document.getElementById('termDefinition');
       const showDefinitionBtn = document.getElementById('showDefinition');
       const nextTermBtn = document.getElementById('nextTerm');
-      let currentTermIndex = 0;
+      let currentTermIndex = getRandomNumber(Object.keys(terms).length);
       
       // Display current term
       function displayTerm() {
