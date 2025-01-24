@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Quiz</title>
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+    >
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .explanation {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e7f5e4;
+            color: #2d6a4f;
+        }
+        #submit-btn, #next-btn {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            width: 100%;
+        }
+    .correct-answer {
+        background-color: #d4edda; /* Light green */
+    }
+    .wrong-answer {
+        background-color: #f8d7da; /* Light red */
+    }
+    </style>
+</head>
+<body>
+    <div id="streak-counter" style="position: fixed; top: 10px; right: 10px;">
+        <p>Streak: <span id="streak">0</span></p>
+        <p>Correct: <span id="correct-count">0</span></p>
+        <p>Wrong: <span id="wrong-count">0</span></p>
+        <p>Total length of dataset: <span id="total-dataset-count">0</span></p>
+    </div>
+
+    <div id="dataset-selector">
+        <label for="dataset">Choose a dataset:</label>
+        <select id="dataset">
+            <option value="cyber_threat_management">Cyber Threat Management</option>
+            <option value="another_dataset">muie, ca n-am facut altceva</option>
+            <!-- Add more options as needed -->
+        </select>
+        <button id="load-dataset">Load Dataset</button>
+    </div>
+
+<div class="quiz-container">
+    <h1 class="text-center mb-4">Security Quiz</h1>
+    <form id="quizForm" class="mb-3">
+        <!-- Questions will be dynamically inserted here -->
+    </form>
+    <button id="submit-btn" class="btn btn-primary btn-custom" onclick="checkAnswer()">Submit Answer</button>
+    <button id="next-btn" class="btn btn-success btn-custom" onclick="nextQuestion()" style="display:none;">Next Question</button>
+</div>
+
+    <script>
+        // JSON object with questions, answers, correct answers, and explanations
+        const cyber_threat_management = [
+            {
+        "question": "Which of the following principles is used by the U.S. government in its access control models?",
+        "answers": [
+            "Job rotation",
+            "Separation of duties",
+            "Need to know",
+            "Mandatory vacations"
+        ],
+        "correctAnswers": [
+            "Need to know"
+        ],
+        "explanation": "Employees in an organization are typically granted access to the data and information that they need to do their job. The U.S. government uses the “need to know” principle in its access control models."
+    },
+    {
+        "question": "An organization has experienced several incidents involving employees downloading unauthorized software and using unauthorized websites and personal USB devices. What measures could the organization implement to manage these threats? (Choose three correct answers)",
+        "answers": [
+            "Implement disciplinary action",
+            "Monitor all employee activity",
+            "Disable USB access",
+            "Provide security awareness training",
+            "Use content filtering",
+            "Run computers from a central server rather than localized hard drives"
+        ],
+        "correctAnswers": [
+            "Disable USB access",
+            "Provide security awareness training",
+            "Use content filtering"
+        ],
+        "explanation": "An organization should implement measures to manage user threats, including:"
+    },
+    {
+        "question": "The ability to carry out highly specialized review and evaluation of incoming cybersecurity information to determine if it is useful for intelligence is covered in what category of the National Cybersecurity Workforce Framework?",
+        "answers": [
+            "Protect and defend",
+            "Oversight and development",
+            "Security provision",
+            "Analyze"
+        ],
+        "correctAnswers": [
+            "Analyze"
+        ],
+        "explanation": "The National Institute of Standards and Technologies (NIST) created the National Cybersecurity Workforce Framework to support organizations seeking cybersecurity professionals. The framework organizes cybersecurity work into seven categories:"
+    },
+    {
+        "question": "What act protects the personal information of students in schools?",
+        "answers": [
+            "HIPPA",
+            "FERPA",
+            "CIPA",
+            "COPPA"
+        ],
+        "correctAnswers": [
+            "FERPA"
+        ],
+        "explanation": "Family Education Records and Privacy Act (FERPA) is an US federal law that governs the access to education records. Under the law, parents must approve the disclosure of a student’s educational information to public entities prior to the actual disclosure. When a student turns 18 years old, or enters a postsecondary institution at any age, their rights under FERPA transfer from the parents to the student."
+    },
+    {
+        "question": "Cybersecurity professionals may have access to sensitive data. What one factor should they understand to help them make informed ethical decisions in relation to this data?",
+        "answers": [
+            "Partnerships with third parties",
+            "Laws governing the data",
+            "A potential bonus",
+            "Cloud provider agreements"
+        ],
+        "correctAnswers": [
+            "Laws governing the data"
+        ],
+        "explanation": "Professional ethics are principles that govern the behavior of a person or group in a business environment. A cybersecurity specialist needs to understand both the law and the interest of the organization to be able to make right decisions."
+    },
+    {
+        "question": "Which of the following frameworks identifies controls based on the latest information about common cyber attacks and provides benchmarks for various platforms?",
+        "answers": [
+            "CIS",
+            "CSA",
+            "The National Cybersecurity Workforce",
+            "ISO"
+        ],
+        "correctAnswers": [
+            "CIS"
+        ],
+        "explanation": "The Center for Internet Security (CIS) developed a set of critical security controls to help organizations with different levels of resources and expertise at their disposal to improve their cyber defenses."
+    },
+    {
+        "question": "What law protects the privacy of an employee’s personal information from being shared with third parties?",
+        "answers": [
+            "PCI DSS",
+            "FIRPA",
+            "GLBA",
+            "SOX"
+        ],
+        "correctAnswers": [
+            "GLBA"
+        ],
+        "explanation": "The Gramm-Leach-Bliley Act (GLBA) is a piece of legislation provides opt-out provisions for individuals, putting them in control of how the information they share with an organization during a business transaction is used. The GLBA restricts information sharing with third party organizations."
+    },
+    {
+        "question": "What federal act law would an individual be subject to if they knowingly accessed a government computer without permission?",
+        "answers": [
+            "GLBA",
+            "ECPA",
+            "CFAA",
+            "SOX"
+        ],
+        "correctAnswers": [
+            "CFAA"
+        ],
+        "explanation": "The Computer Fraud and Abuse Act (CFAA) is a US law enacted in 1986. CFAA prohibits unauthorized access to computer systems. Knowingly accessing a government computer without permission or accessing any computer used in or affecting interstate or foreign commerce is a criminal offense."
+    },
+    {
+        "question": "What do penetration tests and red team exercises achieve?",
+        "answers": [
+            "They simulate attacks to gauge the security capabilities of an organization.",
+            "They provide audit controls for all NetBIOS connections made.",
+            "They provide a list of malware that has successfully penetrated the firewall.",
+            "They provide audit trails for all TCP connections in place at any given time."
+        ],
+        "correctAnswers": [
+            "They simulate attacks to gauge the security capabilities of an organization."
+        ],
+        "explanation": "Organizations with significant resources and cybersecurity expertise run penetration tests and red team exercises (simulated attack exercises) to gauge the security capabilities of an organization."
+    },
+    {
+        "question": "What is the function of the Cloud Security Alliance (CSA)?",
+        "answers": [
+            "It provides security guidance to any organization that uses cloud computing.",
+            "It audits the CIA Triad objectives.",
+            "It produces a statement of applicability (SOA) which stipulates control objectives and audit controls to be implemented. ",
+            "It ensures total compliance with the ISO 27000 standards."
+        ],
+        "correctAnswers": [
+            "It provides security guidance to any organization that uses cloud computing."
+        ],
+        "explanation": "The Cloud Security Alliance (CSA) provides security guidance to any organization that uses cloud computing or wants to assess the overall security risk of a cloud provider."
+    },
+    {
+        "question": "What is the primary goal of IT security governance?",
+        "answers": [
+            "To provide oversight to ensure that risks are adequately mitigated",
+            "To define a set of controls that an organization should implement",
+            "To make decisions to mitigate risk",
+            "To provide a set of policies and procedures to manage sensitive data"
+        ],
+        "correctAnswers": [
+            "To provide oversight to ensure that risks are adequately mitigated"
+        ],
+        "explanation": "IT security governance demonstrates accountability and provides oversight to ensure that any risks are adequately mitigated and that security strategies are aligned with the organization’s business objectives and are compliant with regulations."
+    },{
+        "question": "What is the purpose of the Tripwire network testing tool?",
+        "answers": [
+            "to perform vulnerability scanning",
+            "to provide password auditing and recovery",
+            "to detect unauthorized wired network access",
+            "to provide information about vulnerabilities and aid in penetration testing and IDS signature development",
+            "to assess configuration against established policies, recommended best practices, and compliance standards"
+        ],
+        "correctAnswers": [
+            "to assess configuration against established policies, recommended best practices, and compliance standards"
+        ],
+        "explanation": "The Nesus tool provides remote vulnerability scanning that focuses on remote access, password misconfiguration, and DoS against the TCP/IP stack. L0phtcrack provides password auditing and recovery. Metasploit provides information about vulnerabilities and aids in penetration testing and IDS signature development."
+    },
+    {
+        "question": "An administrator is troubleshooting NetBIOS name resolution on a Windows PC. What command line utility can be used to do this?",
+        "answers": [
+            "nbtstat",
+            "ipconfig",
+            "arp",
+            "netstat"
+        ],
+        "correctAnswers": [
+            "nbtstat"
+        ],
+        "explanation": "The nbtstat command line utility can be used to troubleshoot NetBIOS name resolution problems in a Windows system."
+    },
+    {
+        "question": "The laptop of an attacker is attached to a corporate network. The attacker is examining all of the network traffic that is passing through the network interface card. Which network reconnaissance method does this scenario describe?",
+        "answers": [
+            "penetration exercise",
+            "red team blue team",
+            "sniffing",
+            "bug bounty"
+        ],
+        "correctAnswers": [
+            "sniffing"
+        ],
+        "explanation": "Sniffing is effectively electronic eavesdropping on a network. It occurs when someone is examining all network traffic as it passes through their NIC, independent of whether the traffic is addressed to them or not. Criminals accomplish network sniffing using software, hardware, or a combination of the two."
+    },
+    {
+        "question": "Which cybersecurity weapon scans for use of default passwords, missing patches, open ports, misconfigurations, and active IP addresses?",
+        "answers": [
+            "packet sniffers",
+            "password crackers",
+            "vulnerability scanners",
+            "packet analyzers"
+        ],
+        "correctAnswers": [
+            "vulnerability scanners"
+        ],
+        "explanation": "There are many tools that a cybersecurity specialist uses to evaluate the potential vulnerabilities of an organization."
+    },
+    {
+        "question": "An organization has hired a former hacker to test how well the organization would tolerate a real attack by using malicious techniques. What type of testing is the hacker performing for the organization?",
+        "answers": [
+            "vulnerability",
+            "sniffing",
+            "reconnaissance",
+            "penetration"
+        ],
+        "correctAnswers": [
+            "penetration"
+        ],
+        "explanation": "A penetration test is a safe way for an organization to test systems for weakness by using the same malicious techniques that are used by real hackers."
+    },
+    {
+        "question": "Which penetration test phase is concerned with conducting reconnaissance to gain information about the target network or device?",
+        "answers": [
+            "attack",
+            "discovery",
+            "reporting",
+            "planning"
+        ],
+        "correctAnswers": [
+            "discovery"
+        ],
+        "explanation": "There are four phases in performing network penetration tests: planning, discovery, attack, and reporting.<br>\nPhase 2, discovery, is concerned with using passive and active reconnaissance techniques to gather information."
+    },
+    {
+        "question": "A new technician was overheard telling colleagues that a secure network password had been discovered through a search of social media sites. What technique was used to acquire the password?",
+        "answers": [
+            "passive reconnaissance",
+            "man-in-the-middle",
+            "active reconnaissance",
+            "buffer overflow",
+            "brute force"
+        ],
+        "correctAnswers": [
+            "passive reconnaissance"
+        ],
+        "explanation": "Active reconnaissance means directly interacting with network systems to gather information using many of the tools that are used in penetration testing and vulnerability assessment. Passive reconnaissance means indirectly learning about the network and network users through searches from information sources that range from Facebook to leaked password details on the dark web."
+    },
+    {
+        "question": "What network security testing tool has the ability to provide details on the source of suspicious network activity?",
+        "answers": [
+            "Tripwire",
+            "Zenmap",
+            "SIEM",
+            "SuperScan"
+        ],
+        "correctAnswers": [
+            "SIEM"
+        ],
+        "explanation": "There are various network security tools available for network security testing and evaluation. SuperScan is a Microsoft port scanning software that detects open TCP and UDP ports on systems. Nmap and Zenmap are low-level network scanners available to the public. Tripwire is used to assess if network devices are compliant with network security policies. SIEM is used to provide real-time reporting of security events on the network."
+    },
+    {
+        "question": "What network scanning tool has advanced features that allows it to use decoy hosts to mask the source of the scan?",
+        "answers": [
+            "Nmap",
+            "Metasploit",
+            "Tripwire",
+            "Nessus"
+        ],
+        "correctAnswers": [
+            "Nmap"
+        ],
+        "explanation": "There are various network security tools available for network security testing and evaluation. Nessus can scan systems for software vulnerabilities. Metasploit is used for penetration testing and IDS signature development. Tripwire is used to assess if network devices are compliant with network security policies. Nmap is a low-level network scanner available to the public that an administrator can use to identify network layer protocol support on hosts. Nnmap can use decoy hosts to mask the source of the scan."
+    },
+    {
+        "question": "A new person has joined the security operations team for a manufacturing plant. What is a common scope of responsibility for this person?",
+        "answers": [
+            "day-to-day maintenance of network security",
+            "data security on host devices",
+            "physical and logical security of all business personnel",
+            "managing redundancy operations for all systems"
+        ],
+        "correctAnswers": [
+            "day-to-day maintenance of network security"
+        ],
+        "explanation": "The operations team is responsible for keeping the network up and running in a secure and protected manner. They prevent reoccurring problems when possible, implement designs that reduce hardware failures to an acceptable level for critical systems, and reduce the impact of hardware failure."
+    },
+    {
+        "question": "Which approach provides automated tools allowing an organization to collect data about security threats from various sources?",
+        "answers": [
+            "SuperScan",
+            "Nmap",
+            "SOAR",
+            "NETCAT"
+        ],
+        "correctAnswers": [
+            "SOAR"
+        ],
+        "explanation": "Orchestration Automation and Response (SOAR) tools allow an organization to collect data about security threats from various sources, and respond to low-level events without human intervention."
+    },
+    {
+        "question": "How does network scanning help assess operations security?",
+        "answers": [
+            "It can simulate attacks from malicious sources.",
+            "It can log abnormal activity.",
+            "It can detect weak or blank passwords.",
+            "It can detect open TCP ports on network systems."
+        ],
+        "correctAnswers": [
+            "It can detect open TCP ports on network systems."
+        ],
+        "explanation": "Network scanning can help a network administrator strengthen the security of the network and systems by identifying open TCP and UDP ports that could be targets of an attack."
+    },
+    {
+        "question": "What network testing tool is used for password auditing and recovery?",
+        "answers": [
+            "Metasploit",
+            "SuperScan",
+            "Nessus",
+            "L0phtcrack"
+        ],
+        "correctAnswers": [
+            "L0phtcrack"
+        ],
+        "explanation": "The Nesus tool provides remote vulnerability scanning that focuses on remote access, password misconfiguration, and DoS against the TCP/IP stack. L0phtcrack provides password auditing and recovery. Metasploit provides information about vulnerabilities and aids in penetration testing and IDS signature development."
+    },
+    {
+        "question": "What describes a feature of credentialed scans?",
+        "answers": [
+            "They are less invasive than non-credentialed scans.",
+            "They try to exploit vulnerabilities and may even crash the target.",
+            "They return fewer false positives and fewer false negatives.",
+            "They do not require usernames and passwords to provide authorized access to a system."
+        ],
+        "correctAnswers": [
+            "They return fewer false positives and fewer false negatives."
+        ],
+        "explanation": "In credentialed scans, usernames and passwords provide authorized access to a system, allowing the scanner to harvest more information. Credentialed scans return fewer false positives and fewer false negatives."
+    },{
+        "question": "What is the primary function of (ISC2)?",
+        "answers": [
+            "to provide a weekly digest of news articles about computer security",
+            "to maintain a detailed list of all zero-day attacks",
+            "to maintain a list of common vulnerabilities and exposures (CVE) used by prominent security organizations",
+            "to provide vendor neutral education products and career services"
+        ],
+        "correctAnswers": [
+            "to provide vendor neutral education products and career services"
+        ],
+        "explanation": "International Information Systems Security Certification Consortium (ISC2) is a network security organization that provides vendor neutral education products and career services."
+    },
+    {
+        "question": "What is the primary function of SANS?",
+        "answers": [
+            "to foster cooperation and coordination in information sharing, incident prevention, and rapid reaction",
+            "to maintain the list of common vulnerabilities and exposures (CVE)",
+            "to provide vendor neutral education products and career services",
+            "to maintain the Internet Storm Center"
+        ],
+        "correctAnswers": [
+            "to maintain the Internet Storm Center"
+        ],
+        "explanation": "One of the primary functions of the SysAdmin, Audit, Network, Security (SANS) Institute is the maintenance of the Internet Storm Center early warning system."
+    },
+    {
+        "question": "What is the primary function of the Center for Internet Security (CIS)?",
+        "answers": [
+            "to provide vendor-neutral education products and career services to industry professionals worldwide",
+            "to offer 24×7 cyberthreat warnings and advisories, vulnerability identification, and mitigation and incident responses",
+            "to maintain a list of common vulnerabilities and exposures (CVE) used by security organizations",
+            "to provide a security news portal that aggregates the latest breaking news pertaining to alerts, exploits, and vulnerabilities"
+        ],
+        "correctAnswers": [
+            "to offer 24×7 cyberthreat warnings and advisories, vulnerability identification, and mitigation and incident responses"
+        ],
+        "explanation": "CIS offers 24×7 cyberthreat warnings and advisories, vulnerability identification, and mitigation and incident responses to state, local, tribal, and territorial (SLTT) governments through the Multi-State Information Sharing and Analysis Center (MS-ISAC)."
+    },
+    {
+        "question": "What is the primary purpose of the Forum of Incident Response and Security Teams (FIRST)?",
+        "answers": [
+            "to enable a variety of computer security incident response teams to collaborate, cooperate, and coordinate information sharing, incident prevention, and rapid reaction strategies",
+            "to provide a security news portal that aggregates the latest breaking news pertaining to alerts, exploits, and vulnerabilities",
+            "to offer 24×7 cyberthreat warnings and advisories, vulnerability identification, and mitigation and incident response",
+            "to provide vendor neutral education products and career services to industry professionals worldwide"
+        ],
+        "correctAnswers": [
+            "to enable a variety of computer security incident response teams to collaborate, cooperate, and coordinate information sharing, incident prevention, and rapid reaction strategies"
+        ],
+        "explanation": "The primary purpose of the Forum of Incident Response and Security Teams (FIRST) is to enable a variety of computer security incident response teams to collaborate, cooperate, and coordinate information sharing, incident prevention, and rapid reaction between the teams."
+    },
+    {
+        "question": "Which service is offered by the U.S. Department of Homeland Security (DHS) that enables real-time exchange of cyberthreat indicators between the U.S. Federal Government and the private sector?",
+        "answers": [
+            "AIS",
+            "FireEye",
+            "CVE",
+            "STIX"
+        ],
+        "correctAnswers": [
+            "AIS"
+        ],
+        "explanation": "The U.S. Department of Homeland Security (DHS) offers a free service called Automated Indicator Sharing (AIS) which enables the real-time exchange of cyberthreat indicators (e.g., malicious IP addresses, the sender address of a phishing email, etc.) between the U.S. Federal Government and the private sector."
+    },
+    {
+        "question": "What does the MITRE Corporation create and maintain?",
+        "answers": [
+            "STIX",
+            "IOC",
+            "CVE",
+            "TAXII"
+        ],
+        "correctAnswers": [
+            "CVE"
+        ],
+        "explanation": "The MITRE Corporation creates and maintains a catalog of known security threats called Common Vulnerabilities and Exposures (CVE). The CVE serves as a dictionary of common names (i.e., CVE Identifiers) for publicly known cybersecurity vulnerabilities."
+    },
+    {
+        "question": "Which threat intelligence sharing open standard specifies, captures, characterizes, and communicates events and properties of network operations?",
+        "answers": [
+            "TAXII",
+            "CybOX",
+            "MISP",
+            "Talos"
+        ],
+        "correctAnswers": [
+            "CybOX"
+        ],
+        "explanation": "Structured Threat Information Expression (STIX) is a set of specifications for exchanging cyberthreat information between organizations. Cyber Observable Expression (CybOX) is a set of standardized schema that specifies, captures, characterizes, and communicates events and properties of network operations and that supports many cybersecurity functions. Trusted Automated Exchange of Indicator Information (TAXII) is a specification for an application layer protocol that allows the communication of CTI over HTTPS and is designed to support STIX."
+    },
+    {
+        "question": "What is the primary objective of a threat intelligence platform (TIP)?",
+        "answers": [
+            "to provide a security operations platform that integrates and enhances diverse security tools and threat intelligence",
+            "to aggregate the data in one place and present it in a comprehensible and usable format",
+            "to provide a specification for an application layer protocol that allows the communication of CTI over HTTPS",
+            "to provide a standardized schema for specifying, capturing, characterizing, and communicating events and properties of network operations"
+        ],
+        "correctAnswers": [
+            "to aggregate the data in one place and present it in a comprehensible and usable format"
+        ],
+        "explanation": "A threat intelligence platform (TIP) centralizes the collection of threat data from numerous data sources and formats. TIP is designed to aggregate the data in one place and present it in a comprehensible and usable format. This is especially important as the volume of threat intelligence data can be overwhelming."
+    },
+    {
+        "question": "How does FireEye detect and prevent zero-day attacks?",
+        "answers": [
+            "by keeping a detailed analysis of all viruses and malware",
+            "by establishing an authentication parameter prior to any data exchange",
+            "by only accepting encrypted data packets that validate against their configured hash values",
+            "by addressing all stages of an attack lifecycle with a signature-less engine utilizing stateful attack analysis"
+        ],
+        "correctAnswers": [
+            "by addressing all stages of an attack lifecycle with a signature-less engine utilizing stateful attack analysis"
+        ],
+        "explanation": "FireEye uses a three-pronged approach combining security intelligence, security expertise, and technology. It addresses all stages of an attack lifecycle with a signature-less engine utilizing stateful attack analysis to detect zero-day threats."
+    },
+    {
+        "question": "Which service is provided by the Cisco Talos Group?",
+        "answers": [
+            "preventing online malware from affecting end user devices",
+            "preventing viruses from affecting end user devices",
+            "scanning updates for malware code",
+            "collecting information about active, existing, and emerging threats"
+        ],
+        "correctAnswers": [
+            "collecting information about active, existing, and emerging threats"
+        ],
+        "explanation": "The U.S. Department of Homeland Security (DHS) offers a free service called Automated Indicator Sharing (AIS) which enables the real-time exchange of cyberthreat indicators (e.g., malicious IP addresses, the sender address of a phishing email, etc.) between the U.S. Federal Government and the private sector."
+    }, {
+        "question": "In profiling a server, what defines what an application is allowed to do or run on a server?",
+        "answers": [
+            "user accounts",
+            "listening ports",
+            "service accounts",
+            "software environment"
+        ],
+        "correctAnswers": [
+            "service accounts"
+        ],
+        "explanation": "The service accounts element of a server profile defines the type of service that an application is allowed to run on a given host."
+    },
+    {
+        "question": "In network security assessments, which type of test is used to evaluate the risk posed by vulnerabilities to a specific organization including assessment of the likelihood of attacks and the impact of successful exploits on the organization?",
+        "answers": [
+            "risk analysis",
+            "port scanning",
+            "penetration testing",
+            "vulnerability assessment"
+        ],
+        "correctAnswers": [
+            "risk analysis"
+        ],
+        "explanation": "In risk analysis, security analysts evaluate the risk posed by vulnerabilities to a specific organization. A risk analysis includes assessment of the likelihood of attacks, identifies types of likely threat actors, and evaluates the impact of successful exploits on the organization."
+    },
+    {
+        "question": "When a network baseline is being established for an organization, which network profile element indicates the time between the establishment of a data flow and its termination?",
+        "answers": [
+            "ports used",
+            "total throughput",
+            "session duration",
+            "critical asset address space"
+        ],
+        "correctAnswers": [
+            "session duration"
+        ],
+        "explanation": "Important elements of a network profile include:"
+    },
+    {
+        "question": "Which type of evaluation includes the assessment of the likelihood of an attack, the type of threat actor likely to perpetrate such an attack, and what the consequences could be to the organization if the exploit is successful?",
+        "answers": [
+            "risk analysis",
+            "vulnerability identification",
+            "penetration testing",
+            "server profiling"
+        ],
+        "correctAnswers": [
+            "risk analysis"
+        ],
+        "explanation": "When evaluating a cyber security risk, the analyst takes into account the likelihood of an attack occurring, who the potential threat actors might be, as well as the consequences that might occur if the exploit is successful."
+    },
+    {
+        "question": "A cybersecurity analyst is performing a CVSS assessment on an attack where a web link was sent to several employees. Once clicked, an internal attack was launched. Which CVSS Base Metric Group Exploitability metric is used to document that the user had to click on the link in order for the attack to occur?",
+        "answers": [
+            "availability requirement",
+            "integrity requirement",
+            "scope",
+            "user interaction"
+        ],
+        "correctAnswers": [
+            "user interaction"
+        ],
+        "explanation": "The CVSS Base Metric Group has the following metrics: attack vector, attack complexity, privileges required, user interaction, and scope. The user interaction metric expresses the presence or absence of the requirement for user interaction in order for an exploit to be successful."
+    },
+    {
+        "question": "Which metric class in the CVSS Basic Metric Group identifies the impacts on confidentiality, integrity, and availability?",
+        "answers": [
+            "Impact",
+            "Exploitability",
+            "Modified Base",
+            "Exploit Code Maturity"
+        ],
+        "correctAnswers": [
+            "Impact"
+        ],
+        "explanation": "The Base Metric Group of CVSS represents the characteristics of a vulnerability that are constant over time and across contexts. It contains two classes of metrics:"
+    },
+    {
+        "question": "Which metric in the CVSS Base Metric Group is used with an attack vector?",
+        "answers": [
+            "the proximity of the threat actor to the vulnerability",
+            "the determination whether the initial authority changes to a second authority during the exploit",
+            "the presence or absence of the requirement for user interaction in order for an exploit to be successful",
+            "the number of components, software, hardware, or networks, that are beyond the control of the attacker and that must be present in order for a vulnerability to be successfully exploited"
+        ],
+        "correctAnswers": [
+            "the proximity of the threat actor to the vulnerability"
+        ],
+        "explanation": "The attack vector is one of several metrics defined in the Common Vulnerability Scoring System (CVSS) Base Metric Group Exploitability metrics. The attack vector is how close the threat actor is to the vulnerable component. The farther away the threat actor is to the component, the higher the severity because threat actors close to the network are easier to detect and mitigate."
+    },
+    {
+        "question": "Which statement describes the threat-vulnerability (T-V) pairing?",
+        "answers": [
+            "It is the advisory notice from a vulnerability research center.",
+            "It is the comparison between known malware and system risks.",
+            "It is the detection of malware against a central vulnerability research center.",
+            "It is the identification of threats and vulnerabilities and the matching of threats with vulnerabilities."
+        ],
+        "correctAnswers": [
+            "It is the identification of threats and vulnerabilities and the matching of threats with vulnerabilities."
+        ],
+        "explanation": "A mandatory activity in risk assessment is the identification of threats and vulnerabilities and the matching of threats with vulnerabilities, also called threat-vulnerability (T-V) pairing."
+    },
+    {
+        "question": "In addressing an identified risk, which strategy aims to shift some of the risk to other parties?",
+        "answers": [
+            "risk sharing",
+            "risk retention",
+            "risk reduction",
+            "risk avoidance"
+        ],
+        "correctAnswers": [
+            "risk sharing"
+        ],
+        "explanation": "There are four potential strategies for responding to risks that have been identified:"
+    },
+    {
+        "question": "Which step in the Vulnerability Management Life Cycle categorizes assets into groups or business units, and assigns a business value to asset groups based on their criticality to business operations?",
+        "answers": [
+            "report",
+            "assess",
+            "remediate",
+            "prioritize assets"
+        ],
+        "correctAnswers": [
+            "prioritize assets"
+        ],
+        "explanation": "The steps in the Vulnerability Management Life Cycle include these:"
+    },
+    {
+        "question": "What is an action that should be taken in the discovery step of the vulnerability management life cycle?",
+        "answers": [
+            "assigning business value to assets",
+            "determining a risk profile",
+            "developing a network baseline",
+            "documenting the security plan"
+        ],
+        "correctAnswers": [
+            "developing a network baseline"
+        ],
+        "explanation": "During the discovery step of the vulnerability management life cycle, an inventory of all network assets is made. A network baseline is developed, and security vulnerabilities are identified."
+    },{
+        "question": "The CEO of a company is concerned that if a data breach should occur and customer data is exposed, the company could be sued. The CEO makes the decision to buy insurance for the company. What type of risk mitigation is the CEO implementing?",
+        "answers": [
+            "avoidance",
+            "transference",
+            "reduction",
+            "mitigation"
+        ],
+        "correctAnswers": [
+            "transference"
+        ],
+        "explanation": "Buying insurance transfers the risk to a third party."
+    },
+    {
+        "question": "Which type of security control includes backup and restore operations, as well as fault-tolerant data storage?",
+        "answers": [
+            "deterrent",
+            "recovery",
+            "detection",
+            "compensative"
+        ],
+        "correctAnswers": [
+            "recovery"
+        ],
+        "explanation": "Recovery security controls restore resources, functions and capabilities back to a normal state after a violation of a security policy."
+    },
+    {
+        "question": "Based on the risk management process, what should the cybersecurity team do as the next step when a cybersecurity risk is identified?",
+        "answers": [
+            "Frame the risk.",
+            "Assess the risk.",
+            "Monitor the risk.",
+            "Respond to the risk."
+        ],
+        "correctAnswers": [
+            "Assess the risk."
+        ],
+        "explanation": "Risk management is a formal process that reduces the impact of threats and vulnerabilities. The process involves four general steps:"
+    },
+    {
+        "question": "Which two types of controls are effective after a violation of a security policy occurs? (Choose two.)",
+        "answers": [
+            "corrective",
+            "recovery",
+            "preventive",
+            "deterrent ",
+            "compensative"
+        ],
+        "correctAnswers": [
+            "corrective",
+            "recovery"
+        ],
+        "explanation": "Organizations will implement corrective access controls after a system experiences a threat. Recovery security controls restore resources, functions and capabilities back to a normal state after a violation of a security policy."
+    },
+    {
+        "question": "Which statement describes a cybersecurity risk?",
+        "answers": [
+            "It is a weakness in information systems.",
+            "It is a threat which causes loss of assets.",
+            "It is the probability of loss due to a threat.",
+            "It is the damage incurred by an event which causes disruption of network services."
+        ],
+        "correctAnswers": [
+            "It is the probability of loss due to a threat."
+        ],
+        "explanation": "Risk is the probability of loss due to a threat that damages information systems or organizational assets. Vulnerability is a weakness in information systems."
+    },
+    {
+        "question": "A warning banner that lists the negative outcomes of breaking company policy is displayed each time a computer user logs in to the machine. What type of access control is implemented?",
+        "answers": [
+            "masking",
+            "preventive",
+            "deterrent",
+            "detective"
+        ],
+        "correctAnswers": [
+            "deterrent"
+        ],
+        "explanation": "Deterrents are implemented to discourage or mitigate an action or the behavior of a malicious person."
+    },
+    {
+        "question": "What is the first step in the risk management process that helps to reduce the impact of threats and vulnerabilities?",
+        "answers": [
+            "Frame the risk.",
+            "Assess the risk.",
+            "Monitor the risk.",
+            "Respond to the risk."
+        ],
+        "correctAnswers": [
+            "Frame the risk."
+        ],
+        "explanation": "Risk management is a formal process that reduces the impact of threats and vulnerabilities. The process involves four general steps:"
+    },
+    {
+        "question": "A public cloud service company provides data storage services to multiple customers. The company decides to purchase an insurance policy to cover the data loss due to natural disasters. Which risk management action level has the service company taken to manage the potential risk?",
+        "answers": [
+            "accept",
+            "transfer",
+            "mitigation",
+            "avoidance"
+        ],
+        "correctAnswers": [
+            "transfer"
+        ],
+        "explanation": "Risk management is the identification, evaluation, and prioritization of risks. Organizations manage risk in one of four ways:"
+    },
+    {
+        "question": "A user is asked to perform a risk analysis of a company. The user asks for the company asset database that contains a list of all equipment.The user uses this information as part of a risk analysis. Which type of risk analysis could be performed?",
+        "answers": [
+            "exposure factor",
+            "hardware",
+            "quantitative",
+            "qualitative"
+        ],
+        "correctAnswers": [
+            "quantitative"
+        ],
+        "explanation": "Physical items can be assigned a value for quantitative analysis."
+    },
+    {
+        "question": "Which access control should the IT department use to restore a system back to its normal state?",
+        "answers": [
+            "corrective",
+            "detective",
+            "preventive",
+            "compensative"
+        ],
+        "correctAnswers": [
+            "corrective"
+        ],
+        "explanation": "Access control prevents an unauthorized user from gaining access to sensitive data and networked systems. There are several technologies used to implement effective access control strategies."
+    },
+    {
+        "question": "A user is asked to evaluate the security posture of a company. The user looks at past attempts to break into the company and evaluates the threats and exposures to create a report. Which type of risk analysis could the user perform?",
+        "answers": [
+            "qualitative",
+            "objective",
+            "subjective",
+            "opinion"
+        ],
+        "correctAnswers": [
+            "qualitative"
+        ],
+        "explanation": "Two approaches to risk analysis are quantitative and qualitative. Qualitative analysis is based on opinions and scenarios."
+    },{
+        "question": "Which term is used in the Diamond Model of intrusion to describe a tool that a threat actor uses toward a target system?",
+        "answers": [
+            "adversary",
+            "capability",
+            "infrastructure",
+            "weaponization"
+        ],
+        "correctAnswers": [
+            "capability"
+        ],
+        "explanation": "The Diamond Model of intrusion contains four parts:"
+    },
+    {
+        "question": "Which two actions can help identify an attacking host during a security incident? (Choose two.)",
+        "answers": [
+            "Validate the IP address of the threat actor to determine if it is viable.",
+            "Develop identifying criteria for all evidence such as serial number, hostname, and IP address.",
+            "Log the time and date that the evidence was collected and the incident remediated.",
+            "Use an Internet search engine to gain additional information about the attack.",
+            "Determine the location of the recovery and storage of all evidence."
+        ],
+        "correctAnswers": [
+            "Validate the IP address of the threat actor to determine if it is viable.",
+            "Use an Internet search engine to gain additional information about the attack."
+        ],
+        "explanation": "The following actions can help identify an attacking host during a security incident:"
+    },
+    {
+        "question": "A user is asked to create a disaster recovery plan for a company. The user needs to have a few questions answered by management to proceed. Which three questions should the user ask management as part of the process of creating the plan? (Choose three.)",
+        "answers": [
+            "Where does the individual perform the process?",
+            "What is the process?",
+            "How long does the process take?",
+            "Does the process require approval?",
+            "Can the individual perform the process?",
+            "Who is responsible for the process"
+        ],
+        "correctAnswers": [
+            "Where does the individual perform the process?",
+            "What is the process?",
+            "Who is responsible for the process"
+        ],
+        "explanation": "Disaster recovery plans are made based on the criticality of a service or process. Answers to questions of who, what, where, and why are necessary for a plan to be successful."
+    },
+    {
+        "question": "What is the purpose of the policy element in a computer security incident response capability of an organization, as recommended by NIST?",
+        "answers": [
+            "It provides metrics for measuring the incident response capability and effectiveness.",
+            "It details how incidents should be handled based on the organizational mission and functions.",
+            "It defines how the incident response teams will communicate with the rest of the organization and with other organizations.",
+            "It provides a roadmap for maturing the incident response capability."
+        ],
+        "correctAnswers": [
+            "It details how incidents should be handled based on the organizational mission and functions."
+        ],
+        "explanation": "NIST recommends creating policies, plans, and procedures for establishing and maintaining a CSIRC. A purpose of the policy element is to detail how incidents should be handled based on the mission and functions of an organization."
+    },
+    {
+        "question": "After a threat actor completes a port scan of the public web server of an organization and identifies a potential vulnerability, what is the next phase for the threat actor in order to prepare and launch an attack as defined in the Cyber Kill Chain?",
+        "answers": [
+            "weaponization",
+            "exploitation",
+            "action on objectives",
+            "reconnaissance"
+        ],
+        "correctAnswers": [
+            "weaponization"
+        ],
+        "explanation": "The Cyber Kill Chain specifies seven steps (or phases) and sequences that a threat actor must complete to accomplish an attack:"
+    },
+    {
+        "question": "After containing an incident that infected user workstations with malware, what are three effective remediation procedures that an organization can take for eradication? (Choose three.)",
+        "answers": [
+            "Use clean and recent backups to recover hosts.",
+            "Update and patch the operating system and installed software of all hosts.",
+            "Rebuild DHCP servers using clean installation media.",
+            "Rebuild hosts with installation media if no backups are available.",
+            "Disconnect or disable all wired and wireless network adapters until the remediation is complete.",
+            "Change assigned names and passwords for all devices."
+        ],
+        "correctAnswers": [
+            "Use clean and recent backups to recover hosts.",
+            "Update and patch the operating system and installed software of all hosts.",
+            "Rebuild hosts with installation media if no backups are available."
+        ],
+        "explanation": "To recover infected user workstations, use clean and recent backups or rebuild the PCs with installation media if no backups are available or they have been compromised. Also, fully update and patch the operating system and installed software of all hosts. All users are encouraged to change their passwords for the workstation or workstations they use. Rebuilding DHCP servers is needed only if they are affected by the incident.Also not all devices need to change the name and password configuration setting unless they are affected by the incident."
+    },
+    {
+        "question": "The company you work for has asked you to create a broad plan that includes DRP and getting critical systems to another location in case of disaster. What type of plan are you being asked to create?",
+        "answers": [
+            "annual loss expectancy",
+            "Network Admission Control",
+            "business continuity plan",
+            "disaster recovery plan"
+        ],
+        "correctAnswers": [
+            "business continuity plan"
+        ],
+        "explanation": "A plan that goes beyond an incident response or DRP also allows for succession planning in case of disaster. The broader plan needs to make sure the company can continue to operate in the face of a disaster."
+    },
+    {
+        "question": "A threat actor has gained administrative access to a system and achieved the goal of controlling the system for a future DDoS attack by establishing a communication channel with a CnC owned by the threat actor. Which phase in the Cyber Kill Chain model describes the situation?",
+        "answers": [
+            "command and control",
+            "exploitation",
+            "delivery",
+            "action on objectives"
+        ],
+        "correctAnswers": [
+            "action on objectives"
+        ],
+        "explanation": "The Cyber Kill Chain specifies seven steps (or phases) and sequences that a threat actor must complete to accomplish an attack:"
+    },
+    {
+        "question": "According to NIST, which step in the digital forensics process involves extracting relevant information from data?",
+        "answers": [
+            "collection",
+            "analysis",
+            "reporting",
+            "examination"
+        ],
+        "correctAnswers": [
+            "examination"
+        ],
+        "explanation": "NIST describes the digital forensics process as involving the following four steps:"
+    },
+    {
+        "question": "Which meta-feature element in the Diamond Model describes tools and information (such as software, black hat knowledge base, username and password) that the adversary uses for the intrusion event?",
+        "answers": [
+            "methodology",
+            "resources",
+            "results",
+            "direction"
+        ],
+        "correctAnswers": [
+            "resources"
+        ],
+        "explanation": "The resources element in the Diamond Model is used to describe one or more external resources used by the adversary for the intrusion event. The resources include software, knowledge gained by the adversary, information (e.g., username/passwords), and assets to carry out the attack."
+    },
+    {
+        "question": "What is a MITRE ATT&amp;CK framework?",
+        "answers": [
+            "a knowledge base of threat actor behavior",
+            "guidelines for the collection of digital evidence",
+            "a collection of malware exploits and prevention solutions",
+            "documented processes and procedures for digital forensic analysis"
+        ],
+        "correctAnswers": [
+            "a knowledge base of threat actor behavior"
+        ],
+        "explanation": "The MITRE framework is a global knowledge base of threat actor behavior. It is based on observation and analysis of real-world exploits with the purpose of describing the behavior of the attacker, not the attack itself. It is designed to enable automated information sharing by defining data structures for the exchange of information between its community of users and MITRE."
+    },
+    {
+        "question": "Which action should be included in a plan element that is part of a computer security incident response capability (CSIRC)?",
+        "answers": [
+            "Prioritize severity ratings of security incidents.",
+            "Create an organizational structure and definition of roles, responsibilities, and levels of authority.",
+            "Detail how incidents should be handled based on the mission and functions of an organization.",
+            "Develop metrics for measuring the incident response capability and its effectiveness."
+        ],
+        "correctAnswers": [
+            "Develop metrics for measuring the incident response capability and its effectiveness."
+        ],
+        "explanation": "NIST recommends creating policies, plans, and procedures for establishing and maintaining a CSIRC. A purpose of the plan element is to develop metrics for measuring the incident response capability and its effectiveness."
+    },
+    {
+        "question": "Which statement describes the Cyber Kill Chain?",
+        "answers": [
+            "It specifies common TCP/IP protocols used to fight against cyberattacks.",
+            "It uses the OSI model to describe cyberattacks at each of the seven layers.",
+            "It identifies the steps that adversaries must complete to accomplish their goals.",
+            "It is a set of metrics designed to create a way to describe security incidents in a structured and repeatable way."
+        ],
+        "correctAnswers": [
+            "It identifies the steps that adversaries must complete to accomplish their goals."
+        ],
+        "explanation": "The Cyber Kill Chain was developed to identify and prevent cyber intrusions by specifying what threat actors must complete to accomplish their goals."
+    },{
+        "question": "to find:</strong> Press <strong>“Ctrl + F”</strong> in the browser and fill in whatever wording is in the question to find that question/answer. If the question is not here, find it in <a title=\"IT Questions Bank\" href=\"https://itexamanswers.net/questions-bank\" target=\"_blank\" rel=\"noopener\"><strong>Questions Bank</strong></a>.</p></div><div class=\"message_box note\"><p><strong>NOTE: If you have the new question on this test, please comment Question and Multiple-Choice list in form below this article. We will update answers for you in the shortest time. Thank you! We truly value your contribution to the website.",
+        "answers": [
+            "Use content filtering.",
+            "Disable CD and USB access.",
+            "Provide security awareness training.",
+            "Monitor all activity by the users.",
+            "Change to thin clients.",
+            "Implement disciplinary action."
+        ],
+        "correctAnswers": [
+            "Use content filtering.",
+            "Disable CD and USB access.",
+            "Provide security awareness training."
+        ],
+        "explanation": "Users may be unaware of their actions if not educated in the reasons why their actions can cause a problem with the computer. By implementing several technical and nontechnical practices, the threat can be reduced."
+    },
+    {
+        "question": "Which threat is mitigated through user awareness training and tying security awareness to performance reviews?",
+        "answers": [
+            "user-related threats",
+            "physical threats",
+            "device-related threats",
+            "cloud-related threats"
+        ],
+        "correctAnswers": [
+            "user-related threats"
+        ],
+        "explanation": "Cybersecurity domains provide a framework for evaluating and implementing controls to protect the assets of an organization. Each domain has various countermeasures available to manage threats."
+    },
+    {
+        "question": "What is the workforce framework category that includes highly specialized review and evaluation of incoming cybersecurity information to determine if it is useful for intelligence?",
+        "answers": [
+            "Analyze",
+            "Oversight and Development",
+            "Securely Provision",
+            "Protect and Defend"
+        ],
+        "correctAnswers": [
+            "Analyze"
+        ],
+        "explanation": "The “Analyze” category of the workforce framework includes specialty areas responsible for highly specialized review and evaluation of incoming cybersecurity information to determine its usefulness."
+    },
+    {
+        "question": "A breach occurs in a company that processes credit card information. Which industry specific law governs credit card data protection?",
+        "answers": [
+            "SOX",
+            "GLBA",
+            "ECPA",
+            "PCI DSS"
+        ],
+        "correctAnswers": [
+            "PCI DSS"
+        ],
+        "explanation": "The Payment Card Industry Data Security Standard (PCI DSS) governs how to protect credit card data as merchants and banks exchange transactions."
+    },
+    {
+        "question": "As part of HR policy in a company, an individual may opt-out of having information shared with any third party other than the employer. Which law protects the privacy of personal shared information?",
+        "answers": [
+            "SOX",
+            "PCI",
+            "FIRPA",
+            "GLBA"
+        ],
+        "correctAnswers": [
+            "GLBA"
+        ],
+        "explanation": "The Gramm-Leach-Bliley Act (GLBA) includes privacy provisions for individuals and provides opt-out methods to restrict information sharing with third-party firms."
+    },
+    {
+        "question": "What type of network security test can detect and report changes made to network systems?",
+        "answers": [
+            "integrity checking",
+            "network scanning",
+            "penetration testing",
+            "vulnerability scanning"
+        ],
+        "correctAnswers": [
+            "integrity checking"
+        ],
+        "explanation": "Integrity checking is used to detect and report changes made to systems. Vulnerability scanning is used to find weaknesses and misconfigurations on network systems. Network scanning is used to discover available resources on the network."
+    },
+    {
+        "question": "A security professional is asked to perform an analysis of the current state of a company network. What tool would the security professional use to scan the network only for security risks?",
+        "answers": [
+            "pentest",
+            "malware",
+            "packet analyzer",
+            "vulnerability scanner"
+        ],
+        "correctAnswers": [
+            "vulnerability scanner"
+        ],
+        "explanation": "Vulnerability scanners are commonly used to scan for the following vulnerabilities:<br>\nUse of default passwords or common passwords<br>\nMissing patches<br>\nOpen ports<br>\nMisconfiguration of operating systems and software<br>\nActive IP addresses"
+    },
+    {
+        "question": "What information does the SIEM network security management tool provide to network administrators?",
+        "answers": [
+            "real time reporting and analysis of security events",
+            "a map of network systems and services",
+            "assessment of system security configurations",
+            "detection of open TCP and UDP ports"
+        ],
+        "correctAnswers": [
+            "real time reporting and analysis of security events"
+        ],
+        "explanation": "SIEM, which is a combination of Security Information Management and Security Event Management products, is used for forensic analysis and provides real-time reporting of security events."
+    },
+    {
+        "question": "What type of network security test uses simulated attacks to determine the feasibility of an attack as well as the possible consequences if the attack occurs?",
+        "answers": [
+            "integrity checking",
+            "penetration testing",
+            "vulnerability scanning",
+            "network scanning"
+        ],
+        "correctAnswers": [
+            "penetration testing"
+        ],
+        "explanation": "There are many tests that are used by security specialists to assess the status of a system. They include the following:<br>\n– penetration testing to determine the feasibility of attacks<br>\n– network scanning to scan for and identify open TCP ports<br>\n– integrity checking to check for changes that have occurred in the system<br>\n– vulnerability scanning to detect potential weaknesses in systems"
+    },
+    {
+        "question": "What network testing tool would an administrator use to assess and validate system configurations against security policies and compliance standards?",
+        "answers": [
+            "Nessus",
+            "Tripwire",
+            "L0phtcrack",
+            "Metasploit"
+        ],
+        "correctAnswers": [
+            "Tripwire"
+        ],
+        "explanation": "Tripwire – This tool assesses and validates IT configurations against internal policies, compliance standards, and security best practices."
+    },
+    {
+        "question": "Which statement describes Trusted Automated Exchange of Indicator Information (TAXII)?",
+        "answers": [
+            "It is a dynamic database of real-time vulnerabilities.",
+            "It is a signature-less engine utilizing stateful attack analysis to detect zero-day threats.",
+            "It is the specification for an application layer protocol that allows the communication of CTI over HTTPS.",
+            "It is a set of specifications for exchanging cyber threat information between organizations."
+        ],
+        "correctAnswers": [
+            "It is the specification for an application layer protocol that allows the communication of CTI over HTTPS."
+        ],
+        "explanation": "Trusted Automated Exchange of Indicator Information (TAXII) is the specification for an application layer protocol that allows the communication of CTI over HTTPS. TAXII is designed to support Structured Threat Information Expression (STIX)."
+    },
+    {
+        "question": "How does AIS address a newly discovered threat?",
+        "answers": [
+            "by creating response strategies against the new threat",
+            "by enabling real-time exchange of cyberthreat indicators with U.S. Federal Government and the private sector",
+            "by mitigating the attack with active response defense mechanisms",
+            "by advising the U.S. Federal Government to publish internal response strategies"
+        ],
+        "correctAnswers": [
+            "by enabling real-time exchange of cyberthreat indicators with U.S. Federal Government and the private sector"
+        ],
+        "explanation": "AIS responds to a new threat as soon as it is recognized by immediately sharing it with U.S. Federal Government and the private sector to help them protect their networks against that particular threat."
+    },
+    {
+        "question": "Which organization defines unique CVE Identifiers for publicly known information-security vulnerabilities that make it easier to share data?",
+        "answers": [
+            "FireEye",
+            "DHS",
+            "Cisco Talos",
+            "MITRE"
+        ],
+        "correctAnswers": [
+            "MITRE"
+        ],
+        "explanation": "The United States government sponsored the MITRE Corporation to create and maintain a catalog of known security threats called Common Vulnerabilities and Exposures (CVE). The CVE serves as a dictionary of common names (i.e., CVE Identifiers) for publicly known cybersecurity vulnerabilities."
+    },
+    {
+        "question": "In addressing an identified risk, which strategy aims to decrease the risk by taking measures to reduce vulnerability?",
+        "answers": [
+            "risk sharing",
+            "risk retention",
+            "risk reduction",
+            "risk avoidance"
+        ],
+        "correctAnswers": [
+            "risk reduction"
+        ],
+        "explanation": "There are four potential strategies for responding to risks that have been identified:"
+    },
+    {
+        "question": "Which step in the Vulnerability Management Life Cycle determines a baseline risk profile to eliminate risks based on asset criticality, vulnerability threat, and asset classification?",
+        "answers": [
+            "verify",
+            "assess",
+            "discover",
+            "prioritize assets"
+        ],
+        "correctAnswers": [
+            "assess"
+        ],
+        "explanation": "The steps in the Vulnerability Management Life Cycle include these:Discover – inventory all assets across the network and identify host details, including operating systems and open services, to identify vulnerabilities<br>\nPrioritize assets – categorize assets into groups or business units, and assign a business value to asset groups based on their criticality to business operations<br>\nAssess – determine a baseline risk profile to eliminate risks based on asset criticality, vulnerability threats, and asset classification<br>\nReport – measure the level of business risk associated with assets according to security policies. Document a security plan, monitor suspicious activity, and describe known vulnerabilities.<br>\nRemediate – prioritize according to business risk and fix vulnerabilities in order of risk<br>\nVerify – verify that threats have been eliminated through follow-up audits"
+    },
+    {
+        "question": "When establishing a network profile for an organization, which element describes the time between the establishment of a data flow and its termination?",
+        "answers": [
+            "total throughput",
+            "bandwidth of the Internet connection",
+            "routing protocol convergence",
+            "session duration"
+        ],
+        "correctAnswers": [
+            "session duration"
+        ],
+        "explanation": "A network profile should include some important elements, such as the following:"
+    },
+    {
+        "question": "Which security management plan specifies a component that involves tracking the location and configuration of networked devices and software across an enterprise?",
+        "answers": [
+            "asset management",
+            "patch management",
+            "vulnerability management",
+            "risk management"
+        ],
+        "correctAnswers": [
+            "asset management"
+        ],
+        "explanation": "Asset management involves tracking the location and configuration of networked devices and software across an enterprise."
+    },
+    {
+        "question": "A security analyst is investigating a cyber attack that began by compromising one file system through a vulnerability in a custom software application. The attack now appears to be affecting additional file systems under the control of another security authority. Which CVSS v3.0 base exploitability metric score is increased by this attack characteristic?",
+        "answers": [
+            "user interaction",
+            "privileges required",
+            "attack complexity",
+            "scope"
+        ],
+        "correctAnswers": [
+            "scope"
+        ],
+        "explanation": "The scope metric is impacted by an exploited vulnerability that can affect resources beyond the authorized privileges of the vulnerable component or that are managed by a different security authority."
+    },
+    {
+        "question": "What are the steps in the vulnerability management life cycle?",
+        "answers": [
+            "plan, do, act, check",
+            "identify, protect, detect, respond, recover",
+            "detect, analyze, recover, respond",
+            "discover, prioritize assets, assess, report, remediate, verify"
+        ],
+        "correctAnswers": [
+            "discover, prioritize assets, assess, report, remediate, verify"
+        ],
+        "explanation": "There are six steps in the vulnerability management life cycle:"
+    },
+    {
+        "question": "Why would an organization perform a quantitative risk analysis for network security threats?",
+        "answers": [
+            "so that management has documentation about the number of security attacks that have occurred within a particular time period",
+            "so that management can determine the number of network devices needed to inspect, analyze, and protect the corporate resources",
+            "so that the organization knows the top areas where network security holes exist",
+            "so that the organization can focus resources where they are most needed"
+        ],
+        "correctAnswers": [
+            "so that the organization can focus resources where they are most needed"
+        ],
+        "explanation": "Quantitative risk analysis takes the top threats, assigns a cost value to each threat if it actually occurred, and orders the list from most expensive to least expensive. This priority list allows management to determine where to apply current resources to the threat or threats that would cost the most to the organization. The quantitative risk analysis is based on cost, but this should not be the only criterion applied when, for example, evaluating a system that provides or involves national security."
+    },
+    {
+        "question": "The team is in the process of performing a risk analysis on the database services. The information collected includes the initial value of these assets, the threats to the assets and the impact of the threats. What type of risk analysis is the team performing by calculating the annual loss expectancy?",
+        "answers": [
+            "protection analysis",
+            "qualitative analysis",
+            "loss analysis",
+            "quantitative analysis"
+        ],
+        "correctAnswers": [
+            "quantitative analysis"
+        ],
+        "explanation": "A qualitative or quantitative risk analysis is used to identify and prioritize threats to the organization."
+    },
+    {
+        "question": "Based on the risk management process, what should the cybersecurity team do as the next step when a cybersecurity risk is identified?",
+        "answers": [
+            "Frame the risk.",
+            "Monitor the risk.",
+            "Respond to the risk.",
+            "Assess the risk."
+        ],
+        "correctAnswers": [
+            "Assess the risk."
+        ],
+        "explanation": "Risk management is a formal process that reduces the impact of threats and vulnerabilities. The process involves four general steps:<br>\n– Frame the risk – Identify the threats throughout the organization that increase risk.<br>\n– Assess the risk – Once a risk has been identified, it is assessed and analyzed to determine the severity that the threat poses.<br>\n– Respond to the risk – Develop an action plan to reduce overall organization risk exposure. Management should rank and prioritize threats and a team determines how to respond to each threat.<br>\n– Monitor the risk – Continuously review risk reductions due to elimination, mitigation and transfer actions."
+    },
+    {
+        "question": "In which situation would a detective control be warranted?",
+        "answers": [
+            "after the organization has experienced a breach in order to restore everything back to a normal state",
+            "when the organization needs to repair damage",
+            "when the organization needs to look for prohibited activity",
+            "when the organization cannot use a guard dog, so it is necessary to consider an alternative"
+        ],
+        "correctAnswers": [
+            "when the organization needs to look for prohibited activity"
+        ],
+        "explanation": "Access control prevents an unauthorized user from gaining access to sensitive data and networked systems. There are several technologies used to implement effective access control strategies."
+    },
+    {
+        "question": "Which risk mitigation strategies include outsourcing services and purchasing insurance?",
+        "answers": [
+            "transfer",
+            "acceptance",
+            "reduction",
+            "avoidance"
+        ],
+        "correctAnswers": [
+            "transfer"
+        ],
+        "explanation": "Risk mitigation lessens the exposure of an organization to threats and vulnerabilities by transferring, accepting, avoiding, or taking an action to reduce risk."
+    },
+    {
+        "question": "In quantitative risk analysis, what term is used to represent the degree of destruction that would occur if an event took place?",
+        "answers": [
+            "exposure factor",
+            "single loss expectancy",
+            "annualized rate of occurrence",
+            "annualized loss expectancy"
+        ],
+        "correctAnswers": [
+            "exposure factor"
+        ],
+        "explanation": "Of the formulas used in quantitative risk analysis, exposure factor is used to estimate the degree of destruction that could occur from an event such as flooding or data entry error."
+    },
+    {
+        "question": "Which two values are required to calculate annual loss expectancy? (Choose two.)",
+        "answers": [
+            "annual rate of occurrence",
+            "asset value",
+            "frequency factor",
+            "exposure factor",
+            "single loss expectancy",
+            "quantitative loss value"
+        ],
+        "correctAnswers": [
+            "annual rate of occurrence",
+            "single loss expectancy"
+        ],
+        "explanation": "Single loss expectancy, annualized rate of occurrence, and annualized loss expectancy are used in a quantitative risk analysis"
+    },
+    {
+        "question": "Match the network profile element to the description.",
+        "answers": [
+            "asset value",
+            "quantitative loss value",
+            "single loss expectancy",
+            "exposure factor",
+            "annual rate of occurrence",
+            "frequency factor"
+        ],
+        "correctAnswers": [
+            "single loss expectancy",
+            "annual rate of occurrence"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "Which two values are required to calculate annual loss expectancy? (Choose two.)",
+        "answers": [
+            "asset value",
+            "quantitative loss value",
+            "single loss expectancy",
+            "exposure factor",
+            "annual rate of occurrence",
+            "frequency factor"
+        ],
+        "correctAnswers": [
+            "single loss expectancy",
+            "annual rate of occurrence"
+        ],
+        "explanation": "The single loss expectation, the annual frequency rate and the annual loss expectation are used in a quantitative risk analysis"
+    }, {
+        "question": "Which type of data would be considered an example of volatile data?",
+        "answers": [
+            "temp files",
+            "web browser cache",
+            "memory registers",
+            "log files"
+        ],
+        "correctAnswers": [
+            "memory registers"
+        ],
+        "explanation": "Volatile data is data stored in memory such as registers, cache, and RAM, or it is data that exists in transit. Volatile memory is lost when the computer loses power."
+    },
+    {
+        "question": "Keeping data backups offsite is an example of which type of disaster recovery control?",
+        "answers": [
+            "preventive",
+            "corrective",
+            "detective",
+            "management"
+        ],
+        "correctAnswers": [
+            "preventive"
+        ],
+        "explanation": "A disaster recovery plan enables an organization to prepare for potential disasters and minimize the resulting downtime."
+    },
+    {
+        "question": "Which NIST-defined incident response stakeholder is responsible for coordinating incident response with other stakeholders and minimizing the damage of an incident?",
+        "answers": [
+            "management",
+            "IT support",
+            "the legal department",
+            "human resources"
+        ],
+        "correctAnswers": [
+            "management"
+        ],
+        "explanation": "The management team creates the policies, designs the budget, and is in charge of staffing all departments. Management is also responsible for coordinating the incident response with other stakeholders and minimizing the damage of an incident."
+    },
+    {
+        "question": "What type of exercise interrupts services to verify that all aspects of a business continuity plan are able to respond to a certain type of incident?",
+        "answers": [
+            "Tabletop exercise",
+            "Functional test",
+            "Operational exercise"
+        ],
+        "correctAnswers": [
+            "Operational exercise"
+        ],
+        "explanation": "Operational exercises: At the most extreme are full operational exercises, or simulations. These are designed to interrupt services to verify that all aspects of a plan are in place and sufficient to respond to the type of incident that is being simulated."
+    },
+    {
+        "question": "Match the intrusion event defined in the Diamond Model of intrusion to the description.",
+        "answers": [
+            "the disciplinary measures an organization may perform if an incident is caused by an employee",
+            "the documentation surrounding the preservation of evidence related to an incident",
+            "a plan ensuring that each party involved in an incident response understands how to collect evidence",
+            "a list of all of the stakeholders that were exploited by an attacker"
+        ],
+        "correctAnswers": [
+            "the documentation surrounding the preservation of evidence related to an incident"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "What is a chain of custody?",
+        "answers": [
+            "the disciplinary measures an organization may perform if an incident is caused by an employee",
+            "the documentation surrounding the preservation of evidence related to an incident",
+            "a plan ensuring that each party involved in an incident response understands how to collect evidence",
+            "a list of all of the stakeholders that were exploited by an attacker"
+        ],
+        "correctAnswers": [
+            "the documentation surrounding the preservation of evidence related to an incident"
+        ],
+        "explanation": "A chain of custody refers to the documentation of evidence collected about an incident that is used by authorities during an investigation."
+    },
+    {
+        "question": "According to the Cyber Kill Chain model, after a weapon is delivered to a targeted system, what is the next step that a threat actor would take?",
+        "answers": [
+            "installation",
+            "action on objectives",
+            "exploitation",
+            "weaponization"
+        ],
+        "correctAnswers": [
+            "exploitation"
+        ],
+        "explanation": "The Cyber Kill Chain specifies seven steps (or phases) and sequences that a threat actor must complete to accomplish an attack:"
+    },
+    {
+        "question": "In which step of the NIST incident response process does the CSIRT perform an analysis to determine which networks, systems, or applications are affected; who or what originated the incident; and how the incident is occurring?",
+        "answers": [
+            "detection",
+            "attacker identification",
+            "scoping",
+            "incident notification"
+        ],
+        "correctAnswers": [
+            "scoping"
+        ],
+        "explanation": "In the detection and analysis phase of the NIST incident response process life cycle, the CSIRT should immediately perform an initial analysis to determine the scope of the incident, such as which networks, systems, or applications are affected; who or what originated the incident; and how the incident is occurring."
+    },
+    {
+        "question": "Which task describes threat attribution?",
+        "answers": [
+            "obtaining the most volatile evidence",
+            "reporting the incident to the proper authorities",
+            "evaluating the server alert data",
+            "determining who is responsible for the attack"
+        ],
+        "correctAnswers": [
+            "determining who is responsible for the attack"
+        ],
+        "explanation": "Threat attribution refers to determining the individual, organization, or nation responsible for a successful intrusion or attack incident. The security investigation team correlates all the evidence in order to identify commonalities between tactics, techniques, and procedures (TPPs) for known and unknown threat actors."
+    },
+    {
+        "question": "Place the seven steps defined in the Cyber Kill Chain in the correct order.",
+        "answers": [
+            "Preventive controls",
+            "Detective controls",
+            "Corrective controls"
+        ],
+        "correctAnswers": [
+            "Corrective controls"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "Match the NIST incident response stakeholder with the role.",
+        "answers": [
+            "Preventive controls",
+            "Detective controls",
+            "Corrective controls"
+        ],
+        "correctAnswers": [
+            "Corrective controls"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "Which type of controls restore the system after a disaster or an event?",
+        "answers": [
+            "Preventive controls",
+            "Detective controls",
+            "Corrective controls"
+        ],
+        "correctAnswers": [
+            "Corrective controls"
+        ],
+        "explanation": "Corrective measures include controls that restore the system after a disaster or an event."
+    },
+    {
+        "question": "A company is applying the NIST.SP800-61 r2 incident handling process to security events. What are two examples of incidents that are in the category of precursor? (Choose two.)",
+        "answers": [
+            "a host that has been verified as infected with malware",
+            "multiple failed logins from an unknown source",
+            "an IDS alert message being sent",
+            "log entries that show a response to a port scan",
+            "a newly-discovered vulnerability in Apache web servers"
+        ],
+        "correctAnswers": [
+            "log entries that show a response to a port scan",
+            "a newly-discovered vulnerability in Apache web servers"
+        ],
+        "explanation": "As an incident category, the precursor is a sign that an incident might occur in the future. Examples of precursors are log entries that show a response to a port scan or a newly-discovered vulnerability in web servers using Apache."
+    },
+    {
+        "question": "What will a threat actor do to create a back door on a compromised target according to the Cyber Kill Chain model?",
+        "answers": [
+            "Add services and autorun keys.",
+            "Open a two-way communications channel to the CnC infrastructure.",
+            "Obtain an automated tool to deliver the malware payload.",
+            "Collect and exfiltrate data."
+        ],
+        "correctAnswers": [
+            "Add services and autorun keys."
+        ],
+        "explanation": "Once a target system is compromised, the threat actor will establish a back door into the system to allow for continued access to the target. Adding services and autorun keys is a way to create a point of persistent access."
+    },
+    {
+        "question": "What is the objective the threat actor in establishing a two-way communication channel between the target system and a CnC infrastructure?",
+        "answers": [
+            "to allow the threat actor to issue commands to the software that is installed on the target",
+            "to steal network bandwidth from the network where the target is located",
+            "to send user data stored on the target to the threat actor",
+            "to launch a buffer overflow attack"
+        ],
+        "correctAnswers": [
+            "to allow the threat actor to issue commands to the software that is installed on the target"
+        ],
+        "explanation": "In the command and control phase of the Cyber Kill Chain, the threat actor establishes command and control (CnC) with the target system. With the two-way communication channel, the threat actor is able to issue commands to the malware software installed on the target."
+    },
+    {
+        "question": "Which type of evidence supports an assertion based on previously obtained evidence?",
+        "answers": [
+            "best evidence",
+            "direct evidence",
+            "indirect evidence",
+            "corroborating evidence"
+        ],
+        "correctAnswers": [
+            "corroborating evidence"
+        ],
+        "explanation": "Corroborating evidence is evidence that supports a proposition already supported by initial evidence, therefore confirming the original proposition. Circumstantial evidence is evidence other than first-hand accounts of events provided by witnesses."
+    },
+    {
+        "question": "What is specified in the plan element of the NIST incident response plan?",
+        "answers": [
+            "metrics for measuring the incident response capability and effectiveness",
+            "incident handling based on the mission of the organization",
+            "organizational structure and the definition of roles, responsibilities, and levels of authority",
+            "priority and severity ratings of incidents"
+        ],
+        "correctAnswers": [
+            "metrics for measuring the incident response capability and effectiveness"
+        ],
+        "explanation": "NIST recommends creating policies, plans, and procedures for establishing and maintaining a CSIRC. One component of the plan element is to develop metrics for measuring the incident response capability and its effectiveness."
+    },
+    {
+        "question": "A cybersecurity analyst has been called to a crime scene that contains several technology items including a computer. Which technique will be used so that the information found on the computer can be used in court?",
+        "answers": [
+            "log collection",
+            "Tor",
+            "rootki",
+            "unaltered disk image"
+        ],
+        "correctAnswers": [
+            "unaltered disk image"
+        ],
+        "explanation": "A normal file copy does not recover all data on a storage device so an unaltered disk image is commonly made. An unaltered disk image preserves the original evidence, thus preventing inadvertent alteration during the discovery phase. It also allows recreation of the original evidence."
+    },
+    {
+        "question": "According to NIST, which step in the digital forensics process involves identifying potential sources of forensic data, its acquisition, handling, and storage?",
+        "answers": [
+            "reporting",
+            "examination",
+            "collection",
+            "analysis"
+        ],
+        "correctAnswers": [
+            "collection"
+        ],
+        "explanation": "NIST describes the digital forensics process as involving the following four steps:"
+    },
+    {
+        "question": "Which activity is typically performed by a threat actor in the installation phase of the Cyber Kill Chain?",
+        "answers": [
+            "Obtain an automated tool to deliver the malware payload.",
+            "Harvest email addresses of user accounts.",
+            "Install a web shell on the target web server for persistent access.",
+            "Open a two-way communication channel to the CnC infrastructure."
+        ],
+        "correctAnswers": [
+            "Install a web shell on the target web server for persistent access."
+        ],
+        "explanation": "In the installation phase of the Cyber Kill Chain, the threat actor establishes a back door into the system to allow for continued access to the target."
+    },{
+        "question": "What are three disclosure exemptions that pertain to the FOIA? (Choose three.)",
+        "answers": [
+            "law enforcement records that implicate one of a set of enumerated concerns",
+            "information specifically non-exempt by statue",
+            "confidential business information",
+            "non-geological information regarding wells",
+            "national security and foreign policy information",
+            "public information from financial institutions"
+        ],
+        "correctAnswers": [
+            "law enforcement records that implicate one of a set of enumerated concerns",
+            "confidential business information",
+            "national security and foreign policy information"
+        ],
+        "explanation": "The nine Freedom of Information Act (FOIA) exemptions include the following:"
+    },
+    {
+        "question": "A company is developing security policies. Which security policy would address the rules that determine access to and use of network resources and define the consequences of policy violations?",
+        "answers": [
+            "data policy",
+            "remote access policy",
+            "acceptable use policy",
+            "password policy"
+        ],
+        "correctAnswers": [
+            "acceptable use policy"
+        ],
+        "explanation": "An organization needs to establish clear and detailed security policies. Some of these policies are:<br>\nPassword policy- Defines minimum password requirements, such as the number and type of characters used and how often they need to be changed.<br>\nAcceptable use policy- Highlights a set of rules that determine access to and use of network resources. It may also define the consequences of policy violations.<br>\nRemote access policy- Sets out how to remotely connect to the internal network of an organization and explains what information is remotely accessible.<br>\nData policy- Sets out measurable rules for processing data within an organization, such as specifying where data is stored, how data is classified, and how data is handled and disposed of."
+    },
+    {
+        "question": "Which framework should be recommended for establishing a comprehensive information security management system in an organization?",
+        "answers": [
+            "ISO/IEC 27000",
+            "ISO OSI model",
+            "CIA Triad",
+            "NIST/NICE framework"
+        ],
+        "correctAnswers": [
+            "ISO/IEC 27000"
+        ],
+        "explanation": "A cybersecurity specialist needs to be familiar with the different frameworks and models for managing information security."
+    },
+    {
+        "question": "If a person knowingly accesses a government computer without permission, what federal act laws would the person be subject to?",
+        "answers": [
+            "SOX",
+            "ECPA",
+            "GLBA",
+            "CFAA"
+        ],
+        "correctAnswers": [
+            "CFAA"
+        ],
+        "explanation": "The Computer Fraud and Abuse Act (CFAA) provides the foundation for US laws criminalizing unauthorized access to computer systems."
+    },
+    {
+        "question": "Match the roles in the data governance program to the description.",
+        "answers": [
+            "penetration testing",
+            "integrity checking",
+            "network scanning",
+            "vulnerability scanning"
+        ],
+        "correctAnswers": [
+            "penetration testing"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "What type of security test uses simulated attacks to determine possible consequences of a real threat?",
+        "answers": [
+            "penetration testing",
+            "integrity checking",
+            "network scanning",
+            "vulnerability scanning"
+        ],
+        "correctAnswers": [
+            "penetration testing"
+        ],
+        "explanation": "There are many security tests that can be used to assess a network. Penetration testing is used to determine the possible consequences of successful attacks on the network. Integrity checking is used to detect and report changes made to systems. Vulnerability scanning is used to find weaknesses and misconfigurations on network systems. Network scanning is used to discover available resources on the network."
+    },
+    {
+        "question": "What are two tasks that can be accomplished with the Nmap and Zenmap network tools? (Choose two.)",
+        "answers": [
+            "Identification of Layer 3 protocol support on hosts",
+            "Password recovery",
+            "TCP and UDP port scanning",
+            "Validation of IT system configuratio",
+            "Password auditing"
+        ],
+        "correctAnswers": [
+            "Identification of Layer 3 protocol support on hosts",
+            "TCP and UDP port scanning"
+        ],
+        "explanation": "Nmap is a low-level network scanner that is available to the public and which has the ability to perform port scanning, to identify open TCP and UDP ports, and perform system identification. It can also be used to identify Layer 3 protocols that are running on a system."
+    },
+    {
+        "question": "Which network security tool can detect open TCP and UDP ports on most versions of Microsoft Windows?",
+        "answers": [
+            "L0phtcrack",
+            "Zenmap",
+            "SuperScan",
+            "Nmap"
+        ],
+        "correctAnswers": [
+            "SuperScan"
+        ],
+        "explanation": "There are various network security tools available for network security testing and evaluation. L0phtcrack can be used to perform password auditing and recovery. SuperScan is a Microsoft port scanning software that detects open TCP and UDP ports on systems. Nmap and Zenmap are low-level network scanners available to the public."
+    },
+    {
+        "question": "Match the network security testing tool with the correct function. (Not all options are used.)",
+        "answers": [
+            "deploys incident detection rule sets to network security tools",
+            "creates firewall rules dynamically",
+            "identifies and stops email threat vectors",
+            "identifies and stops latent malware on files",
+            "subjects all traffic to deep packet inspection analysis",
+            "blocks attacks across the web"
+        ],
+        "correctAnswers": [
+            "identifies and stops email threat vectors",
+            "identifies and stops latent malware on files",
+            "blocks attacks across the web"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "Match the command line tool with its description. ",
+        "answers": [
+            "deploys incident detection rule sets to network security tools",
+            "creates firewall rules dynamically",
+            "identifies and stops email threat vectors",
+            "identifies and stops latent malware on files",
+            "subjects all traffic to deep packet inspection analysis",
+            "blocks attacks across the web"
+        ],
+        "correctAnswers": [
+            "identifies and stops email threat vectors",
+            "identifies and stops latent malware on files",
+            "blocks attacks across the web"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "What three services are offered by FireEye? (Choose three.)",
+        "answers": [
+            "deploys incident detection rule sets to network security tools",
+            "creates firewall rules dynamically",
+            "identifies and stops email threat vectors",
+            "identifies and stops latent malware on files",
+            "subjects all traffic to deep packet inspection analysis",
+            "blocks attacks across the web"
+        ],
+        "correctAnswers": [
+            "identifies and stops email threat vectors",
+            "identifies and stops latent malware on files",
+            "blocks attacks across the web"
+        ],
+        "explanation": "FireEye is a security company that uses a three-pronged approach combining security intelligence, security expertise, and technology. FireEye offers SIEM and SOAR with the Helix Security Platform, which use behavioral analysis and advanced threat detection."
+    },
+    {
+        "question": "What is a characteristic of CybOX?",
+        "answers": [
+            "It is the specification for an application layer protocol that allows the communication of CTI over HTTPS.",
+            "It enables the real-time exchange of cyberthreat indicators between the U.S. Federal Government and the private sector.",
+            "It is a set of standardized schemata for specifying, capturing, characterizing, and communicating events and properties of network operations.",
+            "It is a set of specifications for exchanging cyberthreat information between organizations."
+        ],
+        "correctAnswers": [
+            "It is a set of standardized schemata for specifying, capturing, characterizing, and communicating events and properties of network operations."
+        ],
+        "explanation": "CybOX is an open standards set of standardized schemata for specifying, capturing, characterizing, and communicating events and properties of network operations that support many cybersecurity functions."
+    },
+    {
+        "question": "What three security tools does Cisco Talos maintain security incident detection rule sets for? (Choose three.)",
+        "answers": [
+            "ClamAV",
+            "Snort",
+            "Socat",
+            "NetStumbler",
+            "SpamCop"
+        ],
+        "correctAnswers": [
+            "ClamAV",
+            "Snort",
+            "SpamCop"
+        ],
+        "explanation": "Talos maintains the security incident detection rule sets for the Snort.org, ClamAV, and SpamCop network security tools."
+    },
+    {
+        "question": "Which security organization maintains a list of common vulnerabilities and exposures (CVE) and is used by prominent security organizations?",
+        "answers": [
+            "CIS",
+            "SecurityNewsWire",
+            "MITRE",
+            "SANDS"
+        ],
+        "correctAnswers": [
+            "MITRE"
+        ],
+        "explanation": "The MITRE Corporation maintains a list of common vulnerabilities and exposures (CVE) used by prominent security organizations."
+    },
+    {
+        "question": "As a Cybersecurity Analyst, it is very important to keep current. It was suggested by some colleagues that NewsBites contains many good current articles to read. What network security organization maintains this weekly digest?",
+        "answers": [
+            "MITRE",
+            "CIS",
+            "SANDS",
+            "(ISC)2"
+        ],
+        "correctAnswers": [
+            "SANDS"
+        ],
+        "explanation": "The SysAdmin, Audit, Network, Security (SANS) Institute has many resources. One of them is called NewsBites, the weekly digest of news articles about computer security."
+    },
+    {
+        "question": "A network administrator is creating a network profile to generate a network baseline. What is included in the critical asset address space element?",
+        "answers": [
+            "the IP addresses or the logical location of essential systems or data",
+            "the time between the establishment of a data flow and its termination",
+            "the TCP and UDP daemons and ports that are allowed to be open on the server",
+            "the list of TCP or UDP processes that are available to accept data"
+        ],
+        "correctAnswers": [
+            "the IP addresses or the logical location of essential systems or data"
+        ],
+        "explanation": "A network profile should include some important elements, such as the following:<br>\nTotal throughput – the amount of data passing from a given source to a given destination in a given period of time<br>\nSession duratio n – the time between the establishment of a data flow and its termination<br>\nPorts used – a list of TCP or UDP processes that are available to accept data<br>\nCritical asset address space – the IP addresses or the logical location of essential systems or data"
+    },
+    {
+        "question": "When a server profile for an organization is being established, which element describes the TCP and UDP daemons and ports that are allowed to be open on the server?",
+        "answers": [
+            "service accounts",
+            "listening ports",
+            "software environment",
+            "critical asset address space"
+        ],
+        "correctAnswers": [
+            "listening ports"
+        ],
+        "explanation": "A server profile will often contain the following:<br>\n* Listening ports – the TCP and UDP daemons and ports that are allowed to be open on the server<br>\n* User accounts – the parameters defining user access and behavior<br>\n* Service accounts – the definitions of the type of service that an application is allowed to run on a server<br>\n* Software environment – the tasks, processes, and applications that are permitted to run on the server"
+    },
+    {
+        "question": "The IT security personnel of an organization notice that the web server deployed in the DMZ is frequently targeted by threat actors. The decision is made to implement a patch management system to manage the server. Which risk management strategy method is being used to respond to the identified risk?",
+        "answers": [
+            "risk retention",
+            "risk sharing",
+            "risk reduction",
+            "risk avoidance"
+        ],
+        "correctAnswers": [
+            "risk reduction"
+        ],
+        "explanation": "There are four potential strategies for responding to risks that have been identified:<br>\n* Risk avoidance – Stop performing the activities that create risk.<br>\n* Risk reduction – Decrease the risk by taking measures to reduce vulnerability.<br>\n* Risk sharing – Shift some of the risk to other parties.<br>\n* Risk retention – Accept the risk and its consequences."
+    },
+    {
+        "question": "Which class of metric in the CVSS Base Metric Group defines the features of the exploit such as the vector, complexity, and user interaction required by the exploit?",
+        "answers": [
+            "Exploitability",
+            "Exploit Code Maturity",
+            "Impact",
+            "Modified Base"
+        ],
+        "correctAnswers": [
+            "Exploitability"
+        ],
+        "explanation": "The Base Metric Group of CVSS represents the characteristics of a vulnerability that are constant over time and across contexts. It contains two classes of metrics:<br>\n* Exploitability metrics – features of the exploit such as the vector, complexity, and user interaction required by the exploit<br>\n* Impact metrics – the impacts of the exploit rooted in the CIA triad of confidentiality, integrity, and availability"
+    },
+    {
+        "question": "In what order are the steps in the vulnerability management life cycle conducted?",
+        "answers": [
+            "discover, prioritize assets, assess, remediate, report, verify",
+            "discover, prioritize assets, assess, remediate, verify, report",
+            "discover, assess, prioritize assets, report, remediate, verify",
+            "discover, prioritize assets, assess, report, remediate, verify"
+        ],
+        "correctAnswers": [
+            "discover, prioritize assets, assess, report, remediate, verify"
+        ],
+        "explanation": "There are six steps in the vulnerability management life cycle:<br>\n– Discover<br>\n– Prioritize assets<br>\n– Assess<br>\n– Report<br>\n– Remediate<br>\n– Verify"
+    },
+    {
+        "question": "An organization has implemented antivirus software. What type of security control did the company implement?",
+        "answers": [
+            "detective control",
+            "compensative control",
+            "deterrent control",
+            "recovery control"
+        ],
+        "correctAnswers": [
+            "recovery control"
+        ],
+        "explanation": "A cybersecurity specialist must be aware of the technologies and measures that are used as countermeasures to protect the organization from threats and vulnerabilities."
+    },
+    {
+        "question": "What is the first step taken in risk assessment?",
+        "answers": [
+            "Identify threats and vulnerabilities and the matching of threats with vulnerabilities.",
+            "Compare to any ongoing risk assessment as a means of evaluating risk management effectiveness.",
+            "Establish a baseline to indicate risk before security controls are implemented.",
+            "Perform audits to verify threats are eliminated."
+        ],
+        "correctAnswers": [
+            "Identify threats and vulnerabilities and the matching of threats with vulnerabilities."
+        ],
+        "explanation": "The three steps of risk assessment in order are as follows:"
+    },
+    {
+        "question": "Your risk manager just distributed a chart that uses three colors to identify the level of threat to key assets in the information security systems. Red represents high level of risk, yellow represents average level of threat and green represents low level of threat. What type of risk analysis does this chart represent?",
+        "answers": [
+            "qualitative analysis",
+            "quantitative analysis",
+            "loss analysis",
+            "exposure factor analysis"
+        ],
+        "correctAnswers": [
+            "qualitative analysis"
+        ],
+        "explanation": "A qualitative or quantitative risk analysis is used to identify and prioritize threats to the organization."
+    },
+    {
+        "question": "A company manages sensitive customer data for multiple clients. The current authentication mechanism to access the database is username and passphrase. The company is reviewing the risk of employee credential compromise that may lead to a data breach and decides to take action to mitigate the risk before further actions can be taken to eliminate the risk. Which action should the company take for now?",
+        "answers": [
+            "Install fingerprint or retinal scanners.",
+            "Implement multi-factor authentication.",
+            "Purchase an insurance policy.",
+            "Enhance data encryption with an advanced algorithm."
+        ],
+        "correctAnswers": [
+            "Implement multi-factor authentication."
+        ],
+        "explanation": "Risk management is the identification, evaluation, and prioritization of risks. Organizations manage risk in one of four ways, avoidance, mitigation, transfer, or accept. In this scenario, implementing multi-factor authentication can reduce the risk of employee credential compromise, which is a mitigation action. Installing fingerprint or retinal scanners eliminates the risk, which is avoidance. Purchasing an insurance policy is transferring the financial risk to the insurance company."
+    },
+    {
+        "question": "Match the security incident stakeholder with the role.",
+        "answers": [
+            "to launch a DoS attack toward the target",
+            "to get a free malware package",
+            "to avoid detection by the target",
+            "to gain faster delivery of the attack on the target"
+        ],
+        "correctAnswers": [
+            "to avoid detection by the target"
+        ],
+        "explanation": "Place the options in the following order:"
+    },
+    {
+        "question": "Why would threat actors prefer to use a zero-day attack in the Cyber Kill Chain weaponization phase?",
+        "answers": [
+            "to launch a DoS attack toward the target",
+            "to get a free malware package",
+            "to avoid detection by the target",
+            "to gain faster delivery of the attack on the target"
+        ],
+        "correctAnswers": [
+            "to avoid detection by the target"
+        ],
+        "explanation": "When a threat actor prepares a weapon for an attack, the threat actor chooses an automated tool (weaponizer) that can be deployed through discovered vulnerabilities. Malware that will carry desired attacks is then built into the tool as the payload. The weapon (tool plus malware payload) will be delivered to the target system. By using a zero-day weaponizer, the threat actor hopes that the weapon will not be detected because it is unknown to security professionals and detection methods are not yet developed."
+    },
+    {
+        "question": "A threat actor has identified the potential vulnerability of the web server of an organization and is building an attack. What will the threat actor possibly do to build an attack weapon?",
+        "answers": [
+            "Create a point of persistence by adding services.",
+            "Install a webshell on the web server for persistent access.",
+            "Obtain an automated tool in order to deliver the malware payload through the vulnerability.",
+            "Collect credentials of the web server developers and administrators."
+        ],
+        "correctAnswers": [
+            "Obtain an automated tool in order to deliver the malware payload through the vulnerability."
+        ],
+        "explanation": "One tactic of weaponization used by a threat actor after the vulnerability is identified is to obtain an automated tool to deliver the malware payload through the vulnerability."
+    },
+    {
+        "question": "According to NIST standards, which incident response stakeholder is responsible for coordinating an incident response with other stakeholders to minimize the damage of an incident?",
+        "answers": [
+            "IT support",
+            "human resources",
+            "legal department",
+            "management"
+        ],
+        "correctAnswers": [
+            "management"
+        ],
+        "explanation": "The management team creates the policies, designs the budget, and is in charge of staffing all departments. Management is also responsible for coordinating the incident response with other stakeholders and minimizing the damage of an incident."
+    },
+    {
+        "question": "Which meta-feature element in the Diamond Model describes information gained by the adversary?",
+        "answers": [
+            "resources",
+            "results",
+            "direction",
+            "methodology"
+        ],
+        "correctAnswers": [
+            "results"
+        ],
+        "explanation": "The meta-feature element results are used to delineate what the adversary gained from the intrusion event."
+    },
+    {
+        "question": "The manager of a new data center requisitions magnetic door locks. The locks will require employees to swipe an ID card to open. Which type of security control is being implemented?",
+        "answers": [
+            "corrective",
+            "compensative",
+            "preventive",
+            "recovery"
+        ],
+        "correctAnswers": [
+            "preventive"
+        ],
+        "explanation": "Preventive security controls prevent unwanted or unauthorized activities from occurring and/or apply restrictions to authorized users."
+    },
+    {
+        "question": "What is a statement of applicability (SOA)?",
+        "answers": [
+            "It stipulates total compliance with NIST.",
+            "It sets out a broad framework of network protocols used and their implementations.",
+            "It allows for the tailoring of available control objectives and controls to best meet its priorities around confidentiality, integrity, and availability",
+            "It is used as an audit point for network device implementation."
+        ],
+        "correctAnswers": [
+            "It allows for the tailoring of available control objectives and controls to best meet its priorities around confidentiality, integrity, and availability"
+        ],
+        "explanation": "The steps in the Vulnerability Management Life Cycle include these:"
+    },
+    {
+        "question": "An organization is developing a data governance program that follows regulations and policies. Which role in the program is responsible for ensuring compliance with policies and procedures, assigning the proper classification to information assets, and determining the criteria for accessing information assets?",
+        "answers": [
+            "data controller",
+            "data custodian",
+            "data owner",
+            "data protection officer"
+        ],
+        "correctAnswers": [
+            "data owner"
+        ],
+        "explanation": "The steps in the Vulnerability Management Life Cycle include these:"
+    },
+    {
+        "question": "Which step in the Vulnerability Management Life Cycle performs inventory of all assets across the network and identifies host details, including operating system and open services?",
+        "answers": [
+            "Assess",
+            "Discover",
+            "Remediate",
+            "Prioritize assets"
+        ],
+        "correctAnswers": [
+            "Discover"
+        ],
+        "explanation": "The steps in the Vulnerability Management Life Cycle include these:"
+    },
+    {
+        "question": "Which two classes of metrics are included in the CVSS Base Metric Group? (Choose two.)",
+        "answers": [
+            "Confidentiality Requirement",
+            "Modified Base",
+            "Exploit Code Maturity",
+            "Exploitability",
+            "Impact metrics"
+        ],
+        "correctAnswers": [
+            "Exploitability",
+            "Impact metrics"
+        ],
+        "explanation": "The Base Metric Group of CVSS represents the characteristics of a vulnerability that are constant over time and across contexts. It contains two classes of metrics, Exploitability and Impact."
+    },
+    {
+        "question": "Which type of evidence cannot prove an IT security fact on its own?",
+        "answers": [
+            "best",
+            "corroborative",
+            "indirect",
+            "hearsay"
+        ],
+        "correctAnswers": [
+            "indirect"
+        ],
+        "explanation": "Indirect evidence cannot prove a fact on its own, but direct evidence can. Corroborative evidence is supporting information. Best evidence is most reliable because it is something concrete such as a signed contract."
+    },
+    {
+        "question": "What three tasks are accomplished by a comprehensive security policy? (Choose three.)",
+        "answers": [
+            "useful for management",
+            "defines legal consequences of violations",
+            "is not legally binding",
+            "gives security staff the backing of management",
+            "vagueness",
+            "sets rules for expected behavior"
+        ],
+        "correctAnswers": [
+            "defines legal consequences of violations",
+            "gives security staff the backing of management",
+            "sets rules for expected behavior"
+        ],
+        "explanation": "A chain of custody refers to the proper accounting of evidence collected about an incident that is used as part of an investigation. The chain of custody should include the location of all evidence, the identifying information of all evidence such as serial numbers and hostnames, identifying information about all persons handing the evidence, and the time and date that the evidence was collected."
+    },
+    {
+        "question": "To ensure that the chain of custody is maintained, what three items should be logged about evidence that is collected and analyzed after a security incident has occurred? (Choose three.)",
+        "answers": [
+            "measures used to prevent an incident",
+            "time and date the evidence was collected",
+            "extent of the damage to resources and assets",
+            "vulnerabilities that were exploited in an attack",
+            "serial numbers and hostnames of devices used as evidence",
+            "location of all evidence"
+        ],
+        "correctAnswers": [
+            "time and date the evidence was collected",
+            "serial numbers and hostnames of devices used as evidence",
+            "location of all evidence"
+        ],
+        "explanation": "A chain of custody refers to the proper accounting of evidence collected about an incident that is used as part of an investigation. The chain of custody should include the location of all evidence, the identifying information of all evidence such as serial numbers and hostnames, identifying information about all persons handing the evidence, and the time and date that the evidence was collected."
+    },
+    {
+        "question": "Which meta-feature element in the Diamond Model classifies the general type of intrusion event?",
+        "answers": [
+            "phase",
+            "results",
+            "methodology",
+            "direction"
+        ],
+        "correctAnswers": [
+            "methodology"
+        ],
+        "explanation": "Methodology – This is used to classify the general type of event, such as port scan, phishing, content delivery attack, syn flood, etc."
+    },
+    {
+        "question": "What key considerations does a business impact analysis (BIA) examine? (Choose four.)",
+        "answers": [
+            "Recovery time objectives (RTOs)",
+            "Recovery point objectives (RPOs)",
+            "Recovery point times (RPTs)",
+            "Mean time between objectives (RBOs)",
+            "Mean time between failures (MTBF)",
+            "Mean time to repair (MTTR)"
+        ],
+        "correctAnswers": [
+            "Recovery time objectives (RTOs)",
+            "Recovery point objectives (RPOs)",
+            "Mean time between failures (MTBF)",
+            "Mean time to repair (MTTR)"
+        ],
+        "explanation": "Business continuity controls are more than just backing up data and providing redundant hardware. Creating a business continuity plan starts with carrying out a business impact analysis (BIA) to identify critical business processes, resources, and relationships between systems. The BIA focuses on the consequences of the interruption to critical business functions and examines the key considerations listed here: RTOs, RPOs, MTTR, and MTBF. The National Institute of Standards and Technology (NIST) developed best practices in relation to business continuity."
+    },
+    {
+        "question": "Which type of controls help uncover new potential threats?",
+        "answers": [
+            "Preventive controls",
+            "Detective controls",
+            "Corrective controls"
+        ],
+        "correctAnswers": [
+            "Detective controls"
+        ],
+        "explanation": "Detective measures include controls that discover unwanted events. These measures uncover new potential threats."
+    }// Add more questions here as needed
+        ];
+
+        let quizData;
+
+        let correctCount = 0;
+    let wrongCount = 0;
+    let streak = 0;
+document.getElementById('load-dataset').addEventListener('click', function() {
+        const selectedDataset = document.getElementById('dataset').value;
+        loadDataset(selectedDataset);
+    });
+
+    function loadDataset(dataset) {
+        if (dataset == 'cyber_threat_management') {
+            quizData = cyber_threat_management;
+        } else if (dataset == 'another_dataset') {
+            quizData = another_dataset;
+        }
+        // Add more conditions for other datasets
+
+        document.getElementById('dataset-selector').style.display = 'none';
+        document.getElementById('total-dataset-count').textContent = quizData.length;
+        displayQuestion();
+    }
+
+        let currentQuestionIndex = -1;
+
+        // Function to shuffle questions
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
+        // Function to display the current question
+        function displayQuestion() {
+            document.getElementById("submit-btn").style.display = "block"; // Show the "Next Question" button
+            currentQuestionIndex++; // Move to the next question
+            if (currentQuestionIndex >= quizData.length) {
+                alert("You have completed the quiz!");
+                return;
+            }
+
+            const item = quizData[currentQuestionIndex];
+            const form = document.getElementById("quizForm");
+            form.innerHTML = '';  // Clear previous content
+
+            const questionDiv = document.createElement("div");
+            questionDiv.classList.add("question");
+
+            const questionText = document.createElement("p");
+            questionText.textContent = `${currentQuestionIndex + 1}. ${item.question}`;
+            questionDiv.appendChild(questionText);
+
+            const answersDiv = document.createElement("div");
+            answersDiv.classList.add("answers");
+
+            item.answers.forEach((answer, i) => {
+    const answerInput = document.createElement("input");
+    answerInput.type = "checkbox"; // Change to checkbox for multiple selection
+    answerInput.name = `q${currentQuestionIndex}`;
+    answerInput.value = answer;
+    answerInput.id = `q${currentQuestionIndex}a${i}`; // Unique ID for each input
+
+    const answerLabel = document.createElement("label");
+    answerLabel.htmlFor = answerInput.id;
+    answerLabel.textContent = answer;
+
+    answersDiv.appendChild(answerInput);
+    answersDiv.appendChild(answerLabel);
+    answersDiv.appendChild(document.createElement("br"));
+});
+
+            questionDiv.appendChild(answersDiv);
+            form.appendChild(questionDiv);
+
+            // Hide "Next Question" button initially
+            document.getElementById("next-btn").style.display = "none";
+        }
+
+        // Function to check the selected answers and display explanation
+        function checkAnswer() {
+            document.getElementById("submit-btn").style.display = "none"; // Show the "Next Question" button
+            const selectedAnswers = document.querySelectorAll(`input[name="q${currentQuestionIndex}"]:checked`);
+            const item = quizData[currentQuestionIndex];
+            const selectedValues = Array.from(selectedAnswers).map(input => input.value);
+            const explanationDiv = document.createElement("div");
+            explanationDiv.classList.add("explanation");
+
+            const allCorrect = selectedValues.every(value => item.correctAnswers.includes(value));
+            const anyIncorrect = selectedValues.some(value => !item.correctAnswers.includes(value));
+
+            
+            const answers = selectedAnswers;
+            const correctAnswers = quizData[currentQuestionIndex].correctAnswers;
+
+            for (let answer of answers) {
+                console.log(correctAnswers)
+                console.log(answer.value)
+                const label = document.querySelector(`label[for="${answer.id}"]`);
+                    if (correctAnswers.includes(answer.value)) {
+                        console.log('correct')
+                        label.style.backgroundColor = "#90EE90";
+                    } else {
+                        console.log('incorrect')
+                        label.style.backgroundColor = "#FF7F7F";
+                    }
+                }
+
+            //color green all good but unchecked answers
+            const allAnswers = document.querySelectorAll(`input[name="q${currentQuestionIndex}"]`);
+            for (let answer of allAnswers) {
+                if (!selectedValues.includes(answer.value) && correctAnswers.includes(answer.value)) {
+                    const label = document.querySelector(`label[for="${answer.id}"]`);
+                    label.style.backgroundColor = "#90EE90";
+                }
+            }
+                if (allCorrect && !anyIncorrect && selectedValues.length === item.correctAnswers.length) {
+            explanationDiv.textContent = `Correct! ${item.explanation}`;
+            explanationDiv.style.backgroundColor = "#90EE90"; // Light green background
+            correctCount++;
+            streak++;
+        } else {
+            explanationDiv.textContent = `Incorrect! ${item.explanation}`;
+            explanationDiv.style.backgroundColor = "#FF7F7F"; // Light red background
+            wrongCount++;
+            streak = 0;
+        }
+
+        document.getElementById("correct-count").textContent = correctCount;
+        document.getElementById("wrong-count").textContent = wrongCount;
+        document.getElementById("streak").textContent = streak;
+            const form = document.getElementById("quizForm");
+            form.appendChild(explanationDiv);
+            document.getElementById("next-btn").style.display = "block"; // Show the "Next Question" button
+        }
+
+        // Function to go to the next question
+        function nextQuestion() {
+            displayQuestion(); // Load the next random question
+            document.getElementById("next-btn").style.display = "none"; // Hide the "Next Question" button until the next question is ready
+        }
+
+        // Initialize the quiz
+        shuffleArray(quizData);
+        displayQuestion(); // Show the first question when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+        const questions = document.querySelectorAll('.question');
+        
+        questions.forEach(question => {
+        });
+    });
+    </script>
+
+</body>
+</html>
