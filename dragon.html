@@ -13284,7 +13284,7 @@
       "Remove the inbound association of the ACL on the interface and reapply it outbound."
     ],
     "correctAnswers": [
-      "Delete the original ACL and create a new ACL, applying it outbound on the interface."
+      "Remove the inbound association of the ACL on the interface and reapply it outbound."
     ],
     "explanation": "",
     "image": null
@@ -13433,7 +13433,7 @@
     "answers": [],
     "correctAnswers": [],
     "explanation": "",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2021/07/Capturar2-1625854230.7607.png"
   },
   {
     "question": "Which two types of attacks are examples of reconnaissance attacks? (Choose two.)",
@@ -13514,7 +13514,7 @@
     "answers": [],
     "correctAnswers": [],
     "explanation": "",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2021/05/aCapturar-1625852899.846.jpg"
   },
   {
     "question": "What functionality is provided by Cisco SPAN in a switched network?",
@@ -13794,9 +13794,16 @@
     "image": null
   },
   {
-    "question": "Which portion of the Snort IPS rule header identifies the destination port?",
-    "answers": [],
-    "correctAnswers": [],
+    "question": "Which portion of the Snort IPS rule header identifies the destination port? alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS",
+    "answers": [
+        "any",
+        "$HTTP_PORTS",
+        "$HOME_NET",
+        "tcp"
+    ],
+    "correctAnswers": [
+        "$HTTP_PORTS"
+    ],
     "explanation": "",
     "image": null
   },
@@ -13866,7 +13873,21 @@
     "correctAnswers": [],
     "explanation": "",
     "image": "https://itexamanswers.net/wp-content/uploads/2022/03/final_exam_question-1638263775.9834.jpg"
-  }
+  },
+        {
+            "question": " Which two characteristics apply to role-based CLI access superviews? (Choose two.)",
+            "answers": [
+                "A specific superview cannot have commands added to it directly.",
+                "CLI views have passwords, but superviews do not have passwords.",
+                "A single superview can be shared among multiple CLI views.",
+                "Deleting a superview deletes all associated CLI views.",
+                "Users logged in to a superview can access all commands specified within the associated CLI views."
+            ],
+            "correctAnswers": [
+                "A specific superview cannot have commands added to it directly.",
+                "Users logged in to a superview can access all commands specified within the associated CLI views."
+            ]
+        }
 ]
         let quizData;
 
