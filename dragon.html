@@ -12024,7 +12024,7 @@
     "image": null
   },
   {
-    "question": "Consider the access list command applied outbound on a router serial interface.",
+    "question": "Consider the access list command applied outbound on a router serial interface. access-list 100 deny icmp 192.168.10.0 0.0.0.255 any echo reply",
     "answers": [
       "The only traffic denied is echo-replies sourced from the 192.168.10.0/24 network. All other traffic is allowed.",
       "The only traffic denied is ICMP-based traffic. All other traffic is allowed.",
@@ -12198,17 +12198,14 @@
       "trigger",
       "type",
       "depth",
-      "function",
-      "type",
-      "trigger (alarm)",
-      "action"
+      "function"
     ],
     "correctAnswers": [
       "action",
       "trigger",
       "type"
     ],
-    "explanation": "IPS signatures have three distinctive attributes:",
+    "explanation": "IPS signatures have three distinctive attributes: type, trigger(alarm), action",
     "image": null
   },
   {
@@ -12386,19 +12383,28 @@
       "SIEM",
       "SuperScan",
       "Zenmap",
-      "Tripwire",
+      "Tripwire"
+    ],
+    "correctAnswers": [
+      "SIEM"
+    ],
+    "explanation": "There are various network security tools available for network security testing and evaluation. SuperScan is a Microsoft port scanning software that detects open TCP and UDP ports on systems. Nmap and Zenmap are low-level network scanners available to the public. Tripwire is used to assess if network devices are compliant with network security policies. SIEM is used to provide real-time reporting of security events on the network.",
+    "image": null
+  },
+  {
+    "question": "What network security testing tool has the ability to provide details on the source of suspicious network activity?",
+    "answers": [
       "Use statistical analysis to eliminate the most common encryption keys.",
       "Use a keyspace large enough that it takes too much money and too much time to conduct a successful attack.",
       "Use an algorithm that requires the attacker to have both ciphertext and plaintext to conduct a successful attack.",
       "Use frequency analysis to ensure that the most popular letters used in the language are not used in the cipher message."
-    ],
+        ],
     "correctAnswers": [
-      "SIEM",
       "Use a keyspace large enough that it takes too much money and too much time to conduct a successful attack."
     ],
     "explanation": "In a brute-force attack, an attacker tries every possible key with the decryption algorithm knowing that eventually one of them will work. To defend against the brute-force attacks, modern cryptographers have as an objective to have a keyspace (a set of all possible keys) large enough so that it takes too much money and too much time to accomplish a brute-force attack. A security policy requiring passwords to be changed in a predefined interval further defend against the brute-force attacks. The idea is that passwords will have been changed before an attacker exhausts the keyspace.",
     "image": null
-  },
+  }, 
   {
     "question": "How does a Caesar cipher work on a message?",
     "answers": [
@@ -12419,19 +12425,28 @@
       "complexity of the hashing algorithm",
       "the use of 3DES over AES",
       "secrecy of the keys",
-      "secrecy of the algorithm",
+      "secrecy of the algorithm"
+    ],
+    "correctAnswers": [
+      "secrecy of the keys"
+    ],
+    "explanation": "With most modern algorithms, successful decryption requires knowledge of the appropriate cryptographic keys. This means that the security of encryption lies in the secrecy of the keys, not the algorithm.",
+    "image": null
+  },
+  {
+    "question": "What is the next step in the establishment of an IPsec VPN after IKE Phase 1 is complete?",
+    "answers": [
       "negotiation of the ISAKMP policy",
       "negotiation of the IPsec SA policy",
       "detection of interesting traffic",
       "authentication of peers"
     ],
     "correctAnswers": [
-      "secrecy of the keys",
       "negotiation of the IPsec SA policy"
     ],
     "explanation": "Establishing an IPsec tunnel involves five steps:\ndetection of interesting traffic defined by an ACL\nIKE Phase 1 in which peers negotiate ISAKMP SA policy\nIKE Phase 2 in which peers negotiate IPsec SA policy\nCreation of the IPsec tunnel\nTermination of the IPsec tunnel",
     "image": null
-  },
+  }
   {
     "question": "Refer to the exhibit. What algorithm will be used for providing confidentiality?",
     "answers": [
@@ -12444,7 +12459,7 @@
       "AES"
     ],
     "explanation": "The IPsec framework uses various protocols and algorithms to provide data confidentiality, data integrity, authentication, and secure key exchange. Two popular algorithms that are used to ensure that data is not intercepted and modified (data integrity) are MD5 and SHA. AES is an encryption protocol and provides data confidentiality. DH (Diffie-Hellman) is an algorithm that is used for key exchange. RSA is an algorithm used for authentication.",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2021/05/2022-07-11_090617.jpg"
   },
   {
     "question": "After issuing a show run command, an analyst notices the following command:",
@@ -12564,7 +12579,7 @@
       "The ACL name is case sensitive."
     ],
     "explanation": "",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2021/05/i209866v1n2_209866.png"
   },
   {
     "question": "ACLs are used primarily to filter traffic. What are two additional uses of ACLs? (Choose two.):",
@@ -12805,7 +12820,7 @@
       "Frames from PC1 will cause the interface to shut down immediately, and a log entry will be made."
     ],
     "explanation": "Manual configuration of the single allowed MAC address has been entered for port fa0/12. PC1 has a different MAC address and when attached will cause the port to shut down (the default action), a log message to be automatically created, and the violation counter to increment. The default action of shutdown is recommended because the restrict option might fail if an attack is underway.",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2019/12/i235949v1n1_updated94485.png"
   },
   {
     "question": "What security countermeasure is effective for preventing CAM table overflow attacks?",
@@ -12981,7 +12996,7 @@
     "correctAnswers": [
       "dot1x pae authenticator"
     ],
-    "explanation": "Sets the Port Access Entity (PAE) type.\ndot1x pae [supplicant | authenticator | both]",
+    "explanation": "Sets the Port Access Entity (PAE) type.\ndot1x pae [supplicant | authenticator | both]\n\nsupplicant—The interface acts only as a supplicant and does not respond to messages that are meant for an authenticator.\nauthenticator-—The interface acts only as an authenticator and does not respond to any messages meant for a supplicant.\nboth—The interface behaves both as a supplicant and as an authenticator and thus does respond to all dot1x messages.",
     "image": null
   },
   {
@@ -13349,8 +13364,16 @@
   },
   {
     "question": "Refer to the exhibit. A network administrator is configuring a VPN between routers R1 and R2. Which commands would correctly configure a pre-shared key for the two routers?",
-    "answers": [],
-    "correctAnswers": [],
+    "answers": [
+"R1(config)# username R2 password 5tayout!\nR2(config)# username R1 password 5tayout!",
+       "R1(config)# crypto isakmp key 5tayout! address 64.100.0.2\nR2(config)# crypto isakmp key 5tayout! address 64.100.0.1",
+        "R1(config)# crypto isakmp key 5tayout! hostname R1\nR2(config)# crypto isakmp key 5tayout! hostname R2",
+        "R1(config-if)# ppp pap sent-username R1 password 5tayout!\nR2(config-if)# ppp pap sent-username R2 password 5tayout!"
+        
+    ],
+    "correctAnswers": [
+        "R1(config)# crypto isakmp key 5tayout! address 64.100.0.2\nR2(config)# crypto isakmp key 5tayout! address 64.100.0.1"
+    ],
     "explanation": "",
     "image": "https://itexamanswers.net/wp-content/uploads/2021/06/2021-06-05_161700.jpg"
   },
@@ -13713,7 +13736,7 @@
       "ICMPv6 packets that are destined to PC1"
     ],
     "explanation": "The access list LIMITED_ACCESS will block ICMPv6 packets from the ISP. Both port 80, HTTP traffic, and port 443, HTTPS traffic, are explicitly permitted by the ACL. The neighbor advertisements from the ISP router are implicitly permitted by the implicit permit icmp any any nd-na statement at the end of all IPv6 ACLs.",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2016/02/i209796v1n1_209796-2.png"
   },
   {
     "question": "What tool is available through the Cisco IOS CLI to initiate security audits and to make recommended configuration changes with or without administrator input?",
@@ -13741,7 +13764,7 @@
       "R1(config)# crypto isakmp key cisco123 address 209.165.200.227\nR2(config)# crypto isakmp key cisco123 address 209.165.200.226"
     ],
     "explanation": "The correct syntax of the crypto isakmp key command is as follows:\ncrypto isakmp key keystring address peer-address\nor\ncrypto isakmp keykeystring hostname peer-hostnameSo, the correct answer would be the following:\nR1(config)# crypto isakmp key cisco123 address 209.165.200.227\nR2(config)# crypto isakmp key cisco123 address 209.165.200.226",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2021/05/2024-11-18_211110.jpg"
   },
   {
     "question": "Which two technologies provide enterprise-managed VPN solutions? (Choose two.)",
@@ -13849,7 +13872,7 @@
       "access-list 5 permit 192.168.10.0 0.0.0.63\naccess-list 5 permit 192.168.10.64 0.0.0.63"
     ],
     "explanation": "The permit 192.168.10.0 0.0.0.127 command ignores bit positions 1 through 7, which means that addresses 192.168.10.0 through 192.168.10.127 are allowed through. The two ACEs of permit 192.168.10.0 0.0.0.63 and permit 192.168.10.64 0.0.0.63 allow the same address range through the router.",
-    "image": null
+    "image": "https://itexamanswers.net/wp-content/uploads/2021/05/2021-09-28_225548.jpg"
   },
   {
     "question": "Which two characteristics apply to role-based CLI access superviews? (Choose two.)",
