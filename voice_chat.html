@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Chat Fără Bază de Date</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { max-width: 600px; width: 100%; text-align: center; }
+        .card { background: #2d2d2d; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        
+        select, button { padding: 10px; border-radius: 5px; border: none; font-size: 16px; margin: 5px; }
+        select { background: #444; color: white; }
+        button { background: #007bff; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+        .status-box { margin-top: 20px; text-align: left; background: #000; padding: 10px; border-radius: 5px; height: 150px; overflow-y: auto; font-family: monospace; font-size: 0.9em; color: #0f0; }
+        
+        .user-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+        .user-dot { width: 60px; height: 60px; background: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; position: relative; }
+        .user-dot.online { background: #28a745; box-shadow: 0 0 10px #28a745; }
+        .user-dot span { font-size: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔊 Voice Chat - No Database</h1>
+    <p>Sistem Mesh pentru 5 persoane.</p>
+
+    <div class="card" id="login-panel">
+        <h3>Cine ești?</h3>
+        <p>Alege un ID unic. Fiecare prieten trebuie să aleagă un număr diferit!</p>
+        <select id="my-identity">
+            <option value="player_1">Jucător 1 (Alpha)</option>
+            <option value="player_2">Jucător 2 (Beta)</option>
+            <option value="player_3">Jucător 3 (Gamma)</option>
+            <option value="player_4">Jucător 4 (Delta)</option>
+            <option value="player_5">Jucător 5 (Omega)</option>
+        </select>
+        <br>
+        <button id="join-btn">INTRA IN CHAT</button>
+    </div>
+
+    <div class="card" id="room-panel" style="display: none;">
+        <h3>Conectat ca: <span id="display-id" style="color: #007bff;"></span></h3>
+        <p>Încerc să sun pe toți ceilalți...</p>
+        
+        <div class="user-grid">
+            <div id="status_player_1" class="user-dot">P1</div>
+            <div id="status_player_2" class="user-dot">P2</div>
+            <div id="status_player_3" class="user-dot">P3</div>
+            <div id="status_player_4" class="user-dot">P4</div>
+            <div id="status_player_5" class="user-dot">P5</div>
+        </div>
+
+        <button onclick="location.reload()" style="background: #dc3545; margin-top: 20px;">Ieși</button>
+    </div>
+
+    <div class="status-box" id="logs">LOGS:<br></div>
+    <div id="audio-container"></div>
+</div>
+
+<script>
+    // --- CONFIGURARE ---
+    // Definim ID-urile fixe pe care le vor folosi prietenii
+    const ALL_PLAYERS = ['player_1', 'player_2', 'player_3', 'player_4', 'player_5'];
+    
+    // Prefix unic ca sa nu ne intersectam cu alti oameni de pe internet care folosesc serverul public
+    // Schimba asta cu ceva unic pentru voi, ex: "grupul-vesel-2023-"
+    const APP_PREFIX = "test-chat-voice-v1-"; 
+
+    let myPeer = null;
+    let myStream = null;
+    let connectedPeers = {}; // Tine minte cu cine vorbim deja
+
+    // UI Elements
+    const joinBtn = document.getElementById('join-btn');
+    const identitySelect = document.getElementById('my-identity');
+    const logsDiv = document.getElementById('logs');
+
+    // Logger simplu
+    function log(msg) {
+        logsDiv.innerHTML += `> ${msg}<br>`;
+        logsDiv.scrollTop = logsDiv.scrollHeight;
+        console.log(msg);
+    }
+
+    // --- 1. START ---
+    joinBtn.onclick = async () => {
+        const selectedId = identitySelect.value;
+        const fullId = APP_PREFIX + selectedId; // ex: test-chat-voice-v1-player_1
+
+        joinBtn.disabled = true;
+        document.getElementById('login-panel').style.display = 'none';
+        document.getElementById('room-panel').style.display = 'block';
+        document.getElementById('display-id').innerText = selectedId;
+        
+        // Marcam vizual ca noi suntem online
+        document.getElementById(`status_${selectedId}`).classList.add('online');
+        document.getElementById(`status_${selectedId}`).style.border = "3px solid white";
+
+        // Pornim microfonul
+        try {
+            myStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            log("Microfon activat.");
+        } catch (e) {
+            log("EROARE: Nu pot accesa microfonul! " + e);
+            alert("Trebuie sa dai Allow la microfon!");
+            return;
+        }
+
+        // --- 2. INITIALIZARE PEERJS (Server Public) ---
+        myPeer = new Peer(fullId);
+
+        myPeer.on('open', (id) => {
+            log(`Conectat la serverul de semnalizare cu ID: ${id}`);
+            // Imediat ce intram, incercam sa ii sunam pe toti ceilalți
+            connectToAllOthers(selectedId);
+        });
+
+        myPeer.on('error', (err) => {
+            // Ignoram erorile de tip "peer-unavailable" (cand sunam pe cineva care nu e online inca)
+            if(err.type !== 'peer-unavailable') {
+                log(`Eroare PeerJS: ${err.type}`);
+            }
+        });
+
+        // --- 3. CAND NE SUNA CINEVA (ANSWER) ---
+        myPeer.on('call', (call) => {
+            log(`Primim apel de la: ${call.peer}`);
+            
+            // Raspundem automat cu stream-ul nostru
+            call.answer(myStream);
+            
+            // Cand primim stream-ul lor audio
+            call.on('stream', (remoteStream) => {
+                handleRemoteStream(call.peer, remoteStream);
+            });
+        });
+    };
+
+    // --- 4. FUNCTIA DE APELARE (CALL) ---
+    function connectToAllOthers(myId) {
+        ALL_PLAYERS.forEach(playerId => {
+            if (playerId === myId) return; // Nu ne sunam pe noi insine
+
+            const targetFullId = APP_PREFIX + playerId;
+            
+            // Daca suntem deja conectati, sarim
+            if(connectedPeers[targetFullId]) return;
+
+            log(`Încerc să sun pe ${playerId}...`);
+            
+            // Initiem apelul
+            const call = myPeer.call(targetFullId, myStream);
+            
+            if(call) {
+                // Ascultam evenimentul de stream (cand raspund)
+                call.on('stream', (remoteStream) => {
+                    handleRemoteStream(targetFullId, remoteStream);
+                });
+                
+                // Daca inchid apelul
+                call.on('close', () => {
+                    log(`${playerId} a ieșit.`);
+                    removeUser(targetFullId);
+                });
+
+                // Hack: PeerJS da eroare imediat daca userul nu e online.
+                // Dar noi vrem sa retry? Nu neaparat. 
+                // In sistemul Mesh, cand EI intra online, ne vor suna ei pe noi.
+                // Deci e suficient sa incercam o data la inceput.
+            }
+        });
+    }
+
+    // --- 5. GESTIONARE AUDIO SI UI ---
+    function handleRemoteStream(peerId, stream) {
+        if (connectedPeers[peerId]) return; // Evitam duplicate
+        connectedPeers[peerId] = true;
+
+        // Extragem numele scurt (fara prefix) pentru UI
+        const shortName = peerId.replace(APP_PREFIX, '');
+        log(`Conexiune AUDIO stabilită cu ${shortName}!`);
+
+        // Update UI
+        const dot = document.getElementById(`status_${shortName}`);
+        if(dot) dot.classList.add('online');
+
+        // Cream elementul audio
+        const audio = document.createElement('audio');
+        audio.id = `audio_${peerId}`;
+        audio.srcObject = stream;
+        audio.autoplay = true;
+        document.getElementById('audio-container').appendChild(audio);
+    }
+
+    function removeUser(peerId) {
+        connectedPeers[peerId] = false;
+        const shortName = peerId.replace(APP_PREFIX, '');
+        
+        const dot = document.getElementById(`status_${shortName}`);
+        if(dot) dot.classList.remove('online');
+
+        const audio = document.getElementById(`audio_${peerId}`);
+        if(audio) audio.remove();
+    }
+</script>
+
+</body>
+</html>
