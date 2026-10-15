@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sisteme de Operare</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f6f3eb;
+      --bg-warm: #ecead4;
+      --bg-deep: #e0ddc7;
+      --ink: #0f0f0f;
+      --ink-soft: #5a5a55;
+      --mint: #c8ecc8;
+      --mint-light: #dcf5dc;
+      --mint-deep: #95c598;
+      --yellow: #fbc536;
+      --yellow-light: #ffd96a;
+      --yellow-deep: #d99c10;
+      --purple: #dcd0ee;
+      --purple-light: #ece2f8;
+      --purple-deep: #ab9bd0;
+      --black: #1a1a1a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      cursor: none;
+      line-height: 1.5;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+      opacity: 0.1;
+      pointer-events: none;
+      z-index: 200;
+      mix-blend-mode: multiply;
+    }
+
+    .ambient-1 {
+      position: fixed; top: 10%; right: -10%; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(251, 197, 54, 0.1) 0%, transparent 60%);
+      border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .ambient-2 {
+      position: fixed; bottom: -10%; left: -5%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(220, 208, 238, 0.18) 0%, transparent 60%);
+      border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 0;
+    }
+
+    .cursor {
+      position: fixed; width: 12px; height: 12px; background: var(--ink);
+      border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: difference;
+      transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s;
+    }
+
+    /* HEADER */
+    .site-header { display: flex; justify-content: space-between; align-items: center; padding: 28px 56px; position: relative; z-index: 10; }
+    .logo { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+    .logo-cube { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)); }
+    .header-nav { display: flex; gap: 36px; align-items: center; font-family: "Manrope", sans-serif; font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+    .header-nav a { color: var(--ink-soft); text-decoration: none; cursor: none; transition: color 0.2s; }
+    .header-nav a:hover { color: var(--ink); }
+
+    /* HERO */
+    .hero { display: grid; grid-template-columns: 1fr 1.15fr; gap: 40px; padding: 40px 56px 40px; align-items: center; position: relative; z-index: 5; min-height: 720px; }
+    .hero-title { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: clamp(48px, 5.8vw, 84px); line-height: 1; letter-spacing: -0.035em; margin-bottom: 32px; }
+    .title-line { display: block; overflow: hidden; padding-bottom: 0.08em; }
+    .title-inner { display: inline-block; will-change: transform; }
+    .hero-desc { font-size: 16px; line-height: 1.55; color: var(--ink-soft); max-width: 480px; margin-bottom: 40px; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 14px; padding: 18px 32px; font-family: "Manrope", sans-serif; font-size: 15px; font-weight: 600;
+      color: white; background: linear-gradient(180deg, #2a2a2a 0%, #0a0a0a 100%); border-radius: 14px; cursor: none; text-decoration: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 0 rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 0, 0, 0.22), 0 16px 32px rgba(0, 0, 0, 0.12);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s; position: relative; overflow: hidden;
+    }
+    .cta-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -2px 0 rgba(0,0,0,0.4), 0 14px 28px rgba(0,0,0,0.3), 0 28px 56px rgba(0,0,0,0.18); }
+    .cta-arrow { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.12); transition: transform 0.4s; }
+    .cta-btn:hover .cta-arrow { transform: translateX(4px); }
+
+    /* CONSTELLATION */
+    .hero-right { display: flex; align-items: center; justify-content: center; position: relative; }
+    .constellation { position: relative; width: 600px; height: 660px; max-width: 100%; perspective: 1500px; transform-style: preserve-3d; }
+    .constellation-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; will-change: transform; z-index: 1; }
+    .constellation-lines { position: absolute; inset: 0; pointer-events: none; z-index: 0; width: 100%; height: 100%; }
+    .constellation-lines path { fill: none; stroke: rgba(15, 15, 15, 0.85); stroke-width: 1.6; stroke-linecap: round; }
+    .tile { position: absolute; cursor: none; z-index: 2; transform-style: preserve-3d; animation: tile-float var(--dur, 5s) ease-in-out infinite var(--delay, 0s); }
+    .tile-inner { width: 100%; height: 100%; border-radius: 36px; display: flex; align-items: center; justify-content: center; position: relative; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); will-change: transform; }
+    .tile:hover .tile-inner { transform: translateY(-10px) scale(1.06); }
+    .tile-icon { width: 50%; height: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .tile:hover .tile-icon { transform: scale(1.12) rotate(-4deg); }
+    .tile-icon svg { width: 100%; height: 100%; display: block; }
+    
+    .tile.mint .tile-inner { background: linear-gradient(165deg, var(--mint-light) 0%, var(--mint) 50%, var(--mint-deep) 100%); color: var(--ink); box-shadow: inset 0 3px 0 rgba(255,255,255,0.7), inset 0 -4px 0 rgba(0,0,0,0.08), 0 12px 24px rgba(149,197,152,0.4); }
+    .tile.yellow .tile-inner { background: linear-gradient(165deg, var(--yellow-light) 0%, var(--yellow) 50%, var(--yellow-deep) 100%); color: var(--ink); box-shadow: inset 0 3px 0 rgba(255,255,255,0.6), inset 0 -4px 0 rgba(0,0,0,0.12), 0 12px 24px rgba(217,156,16,0.35); }
+    .tile.purple .tile-inner { background: linear-gradient(165deg, var(--purple-light) 0%, var(--purple) 50%, var(--purple-deep) 100%); color: var(--ink); box-shadow: inset 0 3px 0 rgba(255,255,255,0.7), inset 0 -4px 0 rgba(0,0,0,0.08), 0 12px 24px rgba(171,155,208,0.4); }
+    .tile.black .tile-inner { background: linear-gradient(165deg, #3a3a3a 0%, #1a1a1a 50%, #050505 100%); color: white; box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -3px 0 rgba(0,0,0,0.5), 0 12px 24px rgba(0,0,0,0.3); }
+    
+    .tile.size-main { width: 142px; height: 118px; }
+    .tile.size-big { width: 156px; height: 132px; }
+    .tile.size-pill { width: 64px; height: 64px; }
+    .tile.size-pill .tile-inner { border-radius: 50%; }
+
+    .tile-lock { top: 0; left: calc(50% - 32px); --dur: 4s; --delay: 0s; --float: -6px; }
+    .tile-expand { top: 95px; left: 95px; --dur: 5.5s; --delay: 0.4s; --float: -10px; }
+    .tile-chart { top: 95px; left: 365px; --dur: 5s; --delay: 0.8s; --float: -8px; }
+    .tile-cloud { top: 245px; left: 5px; --dur: 6s; --delay: 1.2s; --float: -12px; }
+    .tile-db { top: 240px; left: 222px; --dur: 4.5s; --delay: 0.2s; --float: -7px; }
+    .tile-thumb { top: 245px; left: 455px; --dur: 5.5s; --delay: 0.6s; --float: -10px; }
+    .tile-cursor { top: 405px; left: 45px; --dur: 4s; --delay: 1s; --float: -8px; }
+    .tile-person { top: 395px; left: 145px; --dur: 5s; --delay: 0.3s; --float: -9px; }
+    .tile-globe { top: 395px; left: 315px; --dur: 5.5s; --delay: 0.7s; --float: -11px; }
+    .tile-thumbpill { top: 405px; left: 495px; --dur: 4.5s; --delay: 0.5s; --float: -7px; }
+    .tile-hex { top: 545px; left: 230px; --dur: 6s; --delay: 0.9s; --float: -10px; }
+
+    @keyframes tile-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(var(--float, -8px)); }
+    }
+
+    /* STATS BAR */
+    .stats-bar { padding: 60px 56px; background: var(--bg-warm); border-radius: 48px 48px 0 0; margin-top: 40px; position: relative; z-index: 5; }
+    .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 40px; }
+    .stat { padding: 12px 0; border-right: 1px solid rgba(0, 0, 0, 0.08); }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: clamp(32px, 4vw, 56px); letter-spacing: -0.04em; line-height: 1; margin-bottom: 12px; }
+    .stat-num .accent { color: var(--yellow-deep); }
+    .stat-label { font-family: "JetBrains Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-soft); font-weight: 500; }
+
+    /* FEATURES */
+    .features { padding: 120px 56px; background: var(--bg-warm); position: relative; }
+    .features-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 80px; gap: 60px; }
+    .section-eyebrow { font-family: "JetBrains Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-soft); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .section-eyebrow::before { content: ""; width: 32px; height: 1.5px; background: var(--ink); }
+    .features h2 { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: clamp(40px, 5vw, 64px); line-height: 1.1; letter-spacing: -0.035em; max-width: 720px; }
+    
+    .feature-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card { padding: 32px; border-radius: 36px; min-height: 480px; display: flex; flex-direction: column; cursor: none; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
+    .feature-card:hover { transform: translateY(-12px); }
+    
+    .feature-card.fc-mint { background: linear-gradient(165deg, var(--mint-light) 0%, var(--mint) 100%); box-shadow: inset 0 3px 0 rgba(255,255,255,0.6), inset 0 -4px 0 rgba(0,0,0,0.08), 0 20px 40px rgba(149,197,152,0.3); }
+    .feature-card.fc-yellow { background: linear-gradient(165deg, var(--yellow-light) 0%, var(--yellow) 100%); box-shadow: inset 0 3px 0 rgba(255,255,255,0.5), inset 0 -4px 0 rgba(0,0,0,0.12), 0 20px 40px rgba(217,156,16,0.3); }
+    .feature-card.fc-purple { background: linear-gradient(165deg, var(--purple-light) 0%, var(--purple) 100%); box-shadow: inset 0 3px 0 rgba(255,255,255,0.6), inset 0 -4px 0 rgba(0,0,0,0.08), 0 20px 40px rgba(171,155,208,0.3); }
+    
+    .feature-card .fc-num { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.14em; margin-bottom: 24px; color: var(--ink); opacity: 0.6; }
+    .feature-card h3 { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: 28px; line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 12px; }
+    .feature-card p { font-size: 14px; line-height: 1.55; color: var(--ink); opacity: 0.8; margin-bottom: 16px;}
+    
+    .file-list { margin-top: 10px; max-height: 320px; overflow-y: auto; padding-right: 8px; flex: 1; }
+    .file-list::-webkit-scrollbar { width: 6px; }
+    .file-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+    .file-link {
+        display: flex; align-items: center; gap: 8px;
+        padding: 10px 14px; margin-bottom: 8px;
+        background: rgba(255,255,255,0.45); border-radius: 12px;
+        color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px;
+        transition: transform 0.2s, background 0.2s; cursor: none;
+    }
+    .file-link:hover { background: rgba(255,255,255,0.8); transform: translateX(4px); }
+
+    /* FINAL CTA (USED FOR GRADING TABLE) */
+    .final-cta { padding: 100px 56px 120px; text-align: center; background: var(--bg); }
+    .final-cta-card {
+      max-width: 1100px; margin: 0 auto; padding: 60px 40px; border-radius: 48px;
+      background: linear-gradient(165deg, #2a2a2a 0%, #0a0a0a 100%); color: white; position: relative; overflow: hidden;
+      box-shadow: inset 0 3px 0 rgba(255,255,255,0.15), inset 0 -5px 0 rgba(0,0,0,0.5), 0 30px 60px rgba(0,0,0,0.3);
+    }
+    .final-cta h2 { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: clamp(32px, 4vw, 56px); margin-bottom: 32px; color: white; }
+    .final-cta h2 .accent { color: var(--yellow); }
+    
+    .grading-table {
+        width: 100%; border-collapse: collapse; margin-top: 24px; text-align: left;
+    }
+    .grading-table th, .grading-table td {
+        padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .grading-table th {
+        font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.5);
+    }
+    .grading-table tr:hover td { background: rgba(255,255,255,0.05); }
+    .grading-table td { font-family: "Manrope", sans-serif; font-weight: 500; }
+    .badge { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+    /* FOOTER */
+    .site-footer { background: var(--bg); padding: 60px 56px 40px; border-top: 1px solid rgba(0,0,0,0.06); text-align: center; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.1em;}
+  </style>
+</head>
+<body>
+
+  <div class="ambient-1"></div>
+  <div class="ambient-2"></div>
+  <div class="cursor"></div>
+
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-cube">
+        <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+          <defs><linearGradient id="cubeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3a3a3a" /><stop offset="100%" stop-color="#0a0a0a" /></linearGradient></defs>
+          <path d="M17 3 L29 9 L29 21 L17 27 L17 15 L5 9 Z" fill="url(#cubeGrad)" stroke="#000" stroke-width="0.5" />
+          <path d="M5 9 L17 15 L17 27 L5 21 Z" fill="#2a2a2a" stroke="#000" stroke-width="0.5" />
+          <path d="M17 3 L29 9 L17 15 L5 9 Z" fill="#444" stroke="#000" stroke-width="0.5" />
+        </svg>
+      </span>
+      <span>SISTEME DE OPERARE</span>
+    </div>
+    <nav class="header-nav">
+      <a href="#materiale">Materiale</a>
+      <a href="#laboratoare">Laboratoare</a>
+      <a href="#notare">Reguli Notare</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <div class="hero-left">
+      <h1 class="hero-title">
+        <span class="title-line"><span class="title-inner">Laboratorul de</span></span>
+        <span class="title-line"><span class="title-inner">Sisteme de</span></span>
+        <span class="title-line"><span class="title-inner">Operare</span></span>
+      </h1>
+      <p class="hero-desc">Baza ta pentru cunoașterea detaliată a sistemelor. Cursuri din ultimii ani, laboratoare de la Mara Sterian</p>
+      <a href="#materiale" class="cta-btn">Explorează
+        <span class="cta-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </span>
+      </a>
+    </div>
+
+    <div class="hero-right">
+      <div class="constellation" id="constellation">
+        <svg class="constellation-lines" viewBox="0 0 600 660" preserveAspectRatio="xMidYMid meet">
+          <path d="M 295 64 C 270 90, 220 110, 166 152" />
+          <path d="M 305 64 C 330 90, 380 110, 434 152" />
+          <path d="M 166 200 C 175 230, 230 260, 280 285" />
+          <path d="M 434 200 C 425 230, 370 260, 320 285" />
+          <path d="M 76 305 C 130 305, 200 305, 248 302" />
+          <path d="M 524 305 C 470 305, 400 305, 352 302" />
+          <path d="M 285 372 C 270 405, 240 440, 214 452" />
+          <path d="M 315 372 C 330 405, 360 440, 386 452" />
+          <path d="M 110 437 C 145 442, 175 448, 214 452" />
+          <path d="M 490 437 C 455 442, 425 448, 386 452" />
+          <path d="M 214 502 C 235 540, 270 575, 300 603" />
+          <path d="M 386 502 C 365 540, 330 575, 300 603" />
+        </svg>
+
+        <div class="constellation-inner" id="constellationInner">
+          <div class="tile size-pill black tile-lock"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg></div></div></div>
+          <div class="tile size-main mint tile-expand"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="28" cy="28" r="22" stroke-opacity="0.15" /><path d="M14 14 L24 24 M14 14 L14 21 M14 14 L21 14" /><path d="M42 14 L32 24 M42 14 L42 21 M42 14 L35 14" /><path d="M14 42 L24 32 M14 42 L14 35 M14 42 L21 42" /><path d="M42 42 L32 32 M42 42 L42 35 M42 42 L35 42" /></svg></div></div></div>
+          <div class="tile size-main yellow tile-chart"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="12" width="40" height="28" rx="2" /><line x1="28" y1="40" x2="28" y2="48" /><line x1="22" y1="48" x2="34" y2="48" /><line x1="16" y1="32" x2="16" y2="36" /><line x1="22" y1="26" x2="22" y2="36" /><line x1="28" y1="22" x2="28" y2="36" /><line x1="34" y1="28" x2="34" y2="36" /><line x1="40" y1="18" x2="40" y2="36" /></svg></div></div></div>
+          <div class="tile size-main purple tile-cloud"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 30 a8 8 0 0 1 4-15 a10 10 0 0 1 19 4 a6 6 0 0 1 0 11 Z" /><circle cx="18" cy="42" r="1.4" fill="currentColor" /><circle cx="26" cy="44" r="1.4" fill="currentColor" /><circle cx="34" cy="42" r="1.4" fill="currentColor" /><circle cx="22" cy="48" r="1.2" fill="currentColor" /><circle cx="30" cy="48" r="1.2" fill="currentColor" /></svg></div></div></div>
+          <div class="tile size-big black tile-db"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="28" cy="14" rx="14" ry="5" /><path d="M14 14 v14 a14 5 0 0 0 28 0 v-14" /><path d="M14 28 v14 a14 5 0 0 0 28 0 v-14" /></svg></div></div></div>
+          <div class="tile size-main mint tile-thumb"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 28 L14 46 L20 46 L20 28 Z" /><path d="M20 30 L26 18 a3 3 0 0 1 5.5 2.5 L29 28 L40 28 a4 4 0 0 1 4 4.5 L42 42 a4 4 0 0 1 -4 4 L24 46" /></svg></div></div></div>
+          <div class="tile size-pill black tile-cursor"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><path d="M7 4 L7 18 L11 14 L14 20 L17 19 L14 13 L18 13 Z" /></svg></div></div></div>
+          <div class="tile size-main yellow tile-person"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2"><circle cx="28" cy="28" r="20" stroke-dasharray="6 4" /><circle cx="28" cy="22" r="6" /><path d="M16 40 a12 10 0 0 1 24 0" /></svg></div></div></div>
+          <div class="tile size-main purple tile-globe"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2"><circle cx="28" cy="28" r="18" /><ellipse cx="28" cy="28" rx="18" ry="7" /><ellipse cx="28" cy="28" rx="7" ry="18" /><path d="M10 28 L46 28" /><path d="M28 10 L28 46" /></svg></div></div></div>
+          <div class="tile size-pill black tile-thumbpill"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 11v9a1 1 0 0 0 1 1h2v-10z" /><path d="M10 11l3-7a2 2 0 0 1 3.5 1.5L15.5 10H19a2 2 0 0 1 2 2.3l-1 6a2 2 0 0 1-2 1.7H10" /></svg></div></div></div>
+          <div class="tile size-main mint tile-hex"><div class="tile-inner"><div class="tile-icon"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2"><path d="M28 6 L46 16 L46 38 L28 48 L10 38 L10 16 Z" /><circle cx="28" cy="6" r="2.5" fill="currentColor" /><circle cx="46" cy="16" r="2.5" fill="currentColor" /><circle cx="46" cy="38" r="2.5" fill="currentColor" /><circle cx="28" cy="48" r="2.5" fill="currentColor" /><circle cx="10" cy="38" r="2.5" fill="currentColor" /><circle cx="10" cy="16" r="2.5" fill="currentColor" /><circle cx="28" cy="27" r="3.5" fill="currentColor" /><path d="M28 27 L28 6 M28 27 L46 16 M28 27 L46 38 M28 27 L28 48 M28 27 L10 38 M28 27 L10 16" stroke-width="1.3" /></svg></div></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section class="stats-bar" id="notare">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-num" data-num="50">0<span class="accent">pct</span></div>
+        <div class="stat-label">Maxim posibil lab</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-num="25">0<span class="accent">pct</span></div>
+        <div class="stat-label">Minim promovare lab</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-num="40">0<span class="accent">pct </span></div>
+        <div class="stat-label">Activitate laborator</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-num="20">0<span class="accent">pct</span></div>
+        <div class="stat-label">Proiect dintr-o lista data</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-num="5">0<span class="accent"></span></div>
+        <div class="stat-label">Nota minimă examen</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="materiale">
+
+    <div class="feature-cards">
+      <!-- Cursuri -->
+      <div class="feature-card fc-mint">
+        <div class="fc-num">01 — Cursuri</div>
+        <h3>Teorie (2022)</h3>
+        <p><strong>Atenție:</strong> Aceste slide-uri sunt vechi (din anii precedenți).</p>
+        <div class="file-list">
+          <a href="so/curs-teorie-2022/Curs 01.pptx" class="file-link">📄 Curs 01.pptx</a>
+          <a href="so/curs-teorie-2022/Curs 02.pptx" class="file-link">📄 Curs 02.pptx</a>
+          <a href="so/curs-teorie-2022/Curs 03.pptx" class="file-link">📄 Curs 03.pptx</a>
+          <a href="so/curs-teorie-2022/curs5.pdf" class="file-link">📄 Curs 5.pdf</a>
+          <a href="so/curs-teorie-2022/curs6.pdf" class="file-link">📄 Curs 6.pdf</a>
+          <a href="so/curs-teorie-2022/curs7.pdf" class="file-link">📄 Curs 7.pdf</a>
+          <a href="so/curs-teorie-2022/curs8.pdf" class="file-link">📄 Curs 8.pdf</a>
+          <a href="so/curs-teorie-2022/curs9.pdf" class="file-link">📄 Curs 9.pdf</a>
+          <a href="so/curs-teorie-2022/curs10.pdf" class="file-link">📄 Curs 10.pdf</a>
+          <a href="so/curs-teorie-2022/curs11.pdf" class="file-link">📄 Curs 11.pdf</a>
+        </div>
+      </div>
+
+      <!-- Laboratoare -->
+      <div class="feature-card fc-yellow" id="laboratoare">
+        <div class="fc-num">02 — Laboratoare</div>
+        <h3>Laboratoare</h3>
+        <p>Laboratoarele vin de la Mara Sterian. <br><a href="https://marasterian.github.io/so-labs/" target="_blank" style="color:var(--ink); font-weight:600; cursor:none;">Vezi sursa originală aici.</a></p>
+        <div class="file-list">
+          <a href="so/labs/so-lab-1.pdf" class="file-link">📄 so-lab-1.pdf</a>
+          <a href="so/labs/so-lab-2.pdf" class="file-link">📄 so-lab-2.pdf</a>
+          <a href="so/labs/so-lab-3.pdf" class="file-link">📄 so-lab-3.pdf</a>
+          <a href="so/labs/so-lab-5.pdf" class="file-link">📄 so-lab-5.pdf</a>
+          <a href="so/labs/so-lab-6.pdf" class="file-link">📄 so-lab-6.pdf</a>
+          <a href="so/labs/so-lab7.pdf" class="file-link">📄 so-lab-7.pdf</a>
+          <a href="so/labs/so-lab-8.pdf" class="file-link">📄 so-lab-8.pdf</a>
+          <a href="so/labs/so-lab-9.pdf" class="file-link">📄 so-lab-9.pdf</a>
+          <a href="so/labs/so-lab-10.pdf" class="file-link">📄 so-lab-10.pdf</a>
+          <a href="so/labs/so-lab-11.pdf" class="file-link">📄 so-lab-11.pdf</a>
+        </div>
+      </div>
+
+      <!-- Resurse Generale -->
+      <div class="feature-card fc-purple">
+        <div class="fc-num">03 — Extra</div>
+        <h3>Resurse Generale</h3>
+        <p>Cărți și rezumate care să te ajute să înțelegi materia mai bine.</p>
+        <div class="file-list">
+          <a href="so/dinozaur.pdf" class="file-link">📚 Dinozaur.pdf</a>
+          <a href="so/rezumat so.pdf" class="file-link">📝 Rezumat SO.pdf</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="final-cta-card">
+      <h2 class="final-cta-h2">Calendar <span class="accent">Deadline-uri</span></h2>
+      <p style="color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 30px;">
+        10 laboratoare în total. 40 pct pentru activitate (aprox. 4 pct/lab). Reține: Punctajul maxim este plafonat la 50 pct.
+      </p>
+      
+      <div style="overflow-x: auto;">
+          <table class="grading-table">
+            <thead>
+              <tr>
+                <th>Laborator</th>
+                <th>Exerciții</th>
+                <th>Punctaj / Ex</th>
+                <th>Deadline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Lab 2</td><td>2 exerciții</td><td><span class="badge">2 pct</span></td><td>30.10</td></tr>
+              <tr><td>Lab 3</td><td>3 exerciții</td><td><span class="badge">1.(3) pct</span></td><td>06.11</td></tr>
+              <tr><td>Lab 4</td><td>3 exerciții</td><td><span class="badge">1.(3) pct</span></td><td>13.11</td></tr>
+              <tr><td>Lab 5</td><td>3 exerciții</td><td><span class="badge">1.(3) pct</span></td><td>20.11</td></tr>
+              <tr><td>Lab 6</td><td>2 exerciții</td><td><span class="badge">2 pct</span></td><td>27.11</td></tr>
+              <tr><td>Lab 7</td><td>2 exerciții</td><td><span class="badge">2 pct</span></td><td>04.12</td></tr>
+              <tr><td>Lab 8</td><td>2 exerciții</td><td><span class="badge">2 pct</span></td><td>11.12</td></tr>
+              <tr><td>Lab 9</td><td>3 exerciții</td><td><span class="badge">1.(3) pct</span></td><td>18.12</td></tr>
+              <tr><td>Lab 10</td><td>2 exerciții</td><td><span class="badge">2 pct</span></td><td>15.01.27</td></tr>
+              <tr><td>Lab 11</td><td>3 exerciții</td><td><span class="badge">1.(3) pct</span></td><td>22.01.27</td></tr>
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    © 2026 SISTEME DE OPERARE
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Cursor
+    const cursor = document.querySelector(".cursor");
+    let mx = 0, my = 0, cx = 0, cy = 0;
+    document.addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; });
+    (function animateCursor() {
+      cx += (mx - cx) * 0.2;
+      cy += (my - cy) * 0.2;
+      cursor.style.left = cx + "px";
+      cursor.style.top = cy + "px";
+      requestAnimationFrame(animateCursor);
+    })();
+    document.querySelectorAll("a, button, .tile, .feature-card, .file-link").forEach((el) => {
+      el.addEventListener("mouseenter", () => gsap.to(cursor, { width: 36, height: 36, duration: 0.3 }));
+      el.addEventListener("mouseleave", () => gsap.to(cursor, { width: 12, height: 12, duration: 0.3 }));
+    });
+
+    // Constellation lines length
+    document.querySelectorAll(".constellation-lines path").forEach((path) => {
+      const length = path.getTotalLength();
+      path.style.strokeDasharray = length;
+      path.style.strokeDashoffset = length;
+    });
+
+    // Page Load Animations
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    tl.to(".site-header", { opacity: 1, duration: 0.8 }, 0)
+      .to(".title-inner", { y: 0, duration: 1.1, stagger: 0.08, ease: "power4.out" }, 0.2)
+      .to(".hero-desc", { opacity: 1, duration: 0.8 }, 0.9)
+      .from(".hero-desc", { y: 20, duration: 0.8 }, 0.9)
+      .to(".cta-btn", { opacity: 1, duration: 0.7 }, 1.0)
+      .from(".cta-btn", { y: 20, duration: 0.7 }, 1.0)
+      .to(".tile", { opacity: 1, scale: 1, duration: 1.2, stagger: { each: 0.07, from: "center" }, ease: "elastic.out(1, 0.6)" }, 0.5)
+      .from(".tile", { scale: 0, duration: 1.2, stagger: { each: 0.07, from: "center" }, ease: "elastic.out(1, 0.6)" }, 0.5)
+      .to(".constellation-lines path", { strokeDashoffset: 0, duration: 1.4, stagger: 0.06, ease: "power2.inOut" }, 0.8);
+
+    // 3D Tilt Constellation
+    const constellation = document.getElementById("constellation");
+    const constellationInner = document.getElementById("constellationInner");
+    constellation.addEventListener("mousemove", (e) => {
+      const rect = constellation.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      gsap.to(constellationInner, { rotationY: x * 12, rotationX: -y * 8, duration: 0.8, transformPerspective: 1500, ease: "power2.out" });
+    });
+    constellation.addEventListener("mouseleave", () => {
+      gsap.to(constellationInner, { rotationY: 0, rotationX: 0, duration: 1, ease: "elastic.out(1, 0.5)" });
+    });
+
+    // Parallax hero
+    gsap.to(".constellation", { y: 100, scale: 0.92, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
+    gsap.to(".hero-left", { y: 60, opacity: 0.4, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
+
+    // Counters for Stats
+    document.querySelectorAll(".stat-num").forEach((el) => {
+      const target = parseInt(el.dataset.num);
+      const suffixText = el.querySelector(".accent") ? el.querySelector(".accent").outerHTML : "";
+      ScrollTrigger.create({
+        trigger: el, start: "top 85%", once: true,
+        onEnter: () => {
+          let obj = { val: 0 };
+          gsap.to(obj, {
+            val: target, duration: 2, ease: "power2.out",
+            onUpdate: () => {
+              el.innerHTML = Math.floor(obj.val) + suffixText;
+            }
+          });
+        }
+      });
+    });
+
+    // Word reveal animations
+    function splitWords(selector) {
+      document.querySelectorAll(selector).forEach((el) => {
+        const words = el.innerText.split(" ");
+        el.innerHTML = words.map((w) => `<span class="sword" style="display:inline-block;overflow:hidden;padding-bottom:0.12em;vertical-align:top;"><span class="sword-inner" style="display:inline-block;transform:translateY(110%);will-change:transform;">${w}</span></span>`).join(" ");
+      });
+    }
+    splitWords(".features-title");
+    splitWords(".final-cta-h2");
+    
+    document.querySelectorAll(".final-cta-h2 .sword-inner").forEach((el) => {
+      if (el.textContent.includes("Deadline")) { el.style.color = "var(--yellow)"; }
+    });
+
+    gsap.to(".features-title .sword-inner", { y: 0, duration: 1, stagger: 0.04, ease: "power4.out", scrollTrigger: { trigger: ".features-title", start: "top 80%", toggleActions: "play none none reverse" } });
+    gsap.to(".final-cta-h2 .sword-inner", { y: 0, duration: 1, stagger: 0.05, ease: "power4.out", scrollTrigger: { trigger: ".final-cta-h2", start: "top 80%", toggleActions: "play none none reverse" } });
+
+    // Cards Reveal
+    gsap.from(".feature-card", { y: 80, opacity: 0, duration: 1, stagger: 0.15, ease: "power3.out", scrollTrigger: { trigger: ".feature-cards", start: "top 75%", toggleActions: "play none none reverse" } });
+
+    // Final CTA Pulse
+    gsap.from(".final-cta-card", { scale: 0.92, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: ".final-cta-card", start: "top 80%", toggleActions: "play none none reverse" } });
+
+    // Refresh
+    window.addEventListener("load", () => ScrollTrigger.refresh());
+  </script>
+</body>
+</html>
